@@ -28,24 +28,32 @@ object CollisionSystem {
     /**
      * Builds the AABB hitbox for the player based on position, lane-change motion, and action state.
      */
-    fun getPlayerBox(player: PlayerController): Box {
+    fun getPlayerBox(
+        x: Float,
+        y: Float,
+        z: Float,
+        actionState: PlayerAction
+    ): Box {
         val halfW = GameConfig.PLAYER_WIDTH / 2.0f // 0.4m
         val halfD = GameConfig.PLAYER_DEPTH / 2.0f // 0.3m
-        val height = if (player.actionState == PlayerAction.SLIDING) {
+        val height = if (actionState == PlayerAction.SLIDING) {
             GameConfig.PLAYER_HEIGHT_SLIDING // 0.8m
         } else {
             GameConfig.PLAYER_HEIGHT_STANDING // 1.7m
         }
 
         return Box(
-            minX = player.x - halfW,
-            maxX = player.x + halfW,
-            minY = player.y,
-            maxY = player.y + height,
-            minZ = player.z - halfD,
-            maxZ = player.z + halfD
+            minX = x - halfW,
+            maxX = x + halfW,
+            minY = y,
+            maxY = y + height,
+            minZ = z - halfD,
+            maxZ = z + halfD
         )
     }
+
+    fun getPlayerBox(player: PlayerController): Box =
+        getPlayerBox(player.x, player.y, player.z, player.actionState)
 
     /**
      * Builds the AABB hitbox for an obstacle based on its type and coordinates.
@@ -71,17 +79,19 @@ object CollisionSystem {
     }
 
     /**
-     * Checks if the player collides with any active obstacle.
-     * Returns the first colliding obstacle, or null if clear.
+     * Checks if coordinates and action collide with any active obstacle.
      */
     fun checkCollision(
-        player: PlayerController,
+        x: Float,
+        y: Float,
+        z: Float,
+        actionState: PlayerAction,
         obstacles: List<Obstacle>,
         isInvincible: Boolean = false
     ): Obstacle? {
         if (isInvincible) return null
 
-        val playerBox = getPlayerBox(player)
+        val playerBox = getPlayerBox(x, y, z, actionState)
         for (i in obstacles.indices) {
             val obs = obstacles[i]
             // Fast reject obstacles that are far ahead (> 15m) or far behind (< -5m)
@@ -94,4 +104,14 @@ object CollisionSystem {
         }
         return null
     }
+
+    /**
+     * Checks if the player collides with any active obstacle.
+     * Returns the first colliding obstacle, or null if clear.
+     */
+    fun checkCollision(
+        player: PlayerController,
+        obstacles: List<Obstacle>,
+        isInvincible: Boolean = false
+    ): Obstacle? = checkCollision(player.x, player.y, player.z, player.actionState, obstacles, isInvincible)
 }

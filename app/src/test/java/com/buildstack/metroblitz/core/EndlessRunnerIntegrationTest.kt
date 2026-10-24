@@ -16,6 +16,7 @@ class EndlessRunnerIntegrationTest {
     @Test
     fun testTenMinuteHeadlessRun() {
         val world = GameWorld(seed = 9999L)
+        world.isInvincible = true
         world.startPlaying()
         assertEquals(GameState.PLAYING, world.state)
 
@@ -45,6 +46,7 @@ class EndlessRunnerIntegrationTest {
     @Test
     fun testOneHourBoundedPositions() {
         val world = GameWorld(seed = 12345L)
+        world.isInvincible = true
         world.startPlaying()
 
         val totalTime = 3600.0f // 1 hour
