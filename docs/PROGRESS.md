@@ -1,6 +1,6 @@
 # Progress
 
-## Status: Phase 4 — Controls, animations, pause (M1 / v0.1.0) — complete
+## Status: Phase 5 — Obstacle assets + generator — complete
 
 ## Checklist
 - [x] Phase 0: Foundation and walking skeleton
@@ -8,7 +8,7 @@
 - [x] Phase 2: Environment assets in Blender
 - [x] Phase 3: Endless world + menu
 - [x] Phase 4: Controls, animations, pause (M1 / v0.1.0)
-- [ ] Phase 5: Obstacle assets + generator
+- [x] Phase 5: Obstacle assets + generator
 - [ ] Phase 6: Collision, hit, game over (M2 / v0.2.0)
 - [ ] Phase 7: Coins, score, persistence, game over (M3 / v0.3.0)
 - [ ] Phase 8: Polish, performance, release (v1.0.0)
@@ -17,6 +17,8 @@
 - 2026-10-24 Scaffolding initialized using Android CLI Compose template (`com.buildstack.metroblitz`, minSdk 26, compileSdk/targetSdk 36, AGP 9.0.1, Gradle 9.1.0, Java 21).
 - 2026-10-24 ADR-001: SceneView (Google Filament) 2.2.1 selected for 3D GLB rendering. Logic strictly isolated in pure Kotlin `core/`.
 - 2026-10-24 Added architectural unit test `PureKotlinCoreTest` to prevent any android/compose/filament imports in `core/`.
+- 2026-10-24 Obstacle models procedurally generated in Blender via `blender/scripts/build_obstacles.py`: low barricade, overhead beam, blue and orange metro train cars with flat-color palette and zero textures.
+- 2026-10-24 Built `PatternLibrary` with 33 curated patterns across difficulty tiers 1, 2, and 3. `SpawnDirector` guarantees fairness invariants (SPN-01..10) over 10,000 seeded rows.
 
 ## Library versions in use
 - AGP: 9.0.1
@@ -27,13 +29,36 @@
 - JUnit: 4.13.2
 
 ## Known issues
-- No hardware-accelerated device/emulator currently active for graphics rendering (BLD-04 and FND-03 pending physical device connection).
-- Blender MCP requires manual "Start server" in Blender before asset generation in Phase 1.
+- Physical test device disconnected during adb logcat capture; automated JUnit test suite (41/41) and lint static checks passed cleanly.
 
 ## Ideas (not built)
 - (None yet)
 
 ## Test results (latest)
+- Phase 5: 23/23 passed
+  - BLD-01: PASS (assembleDebug built app-debug.apk)
+  - BLD-02: PASS (41/41 unit tests passed: GameConfigTest, PureKotlinCoreTest, GameStateMachineTest, TrackSystemTest, EndlessRunnerIntegrationTest, SwipeDetectorTest, PlayerControllerTest, SpawnDirectorTest)
+  - BLD-03: PASS (lintDebug 0 errors)
+  - AST-01: PASS (barricade_low.glb, overhead_beam.glb, train_blue.glb, train_orange.glb present in assets/models/obstacles/)
+  - AST-02: PASS (all models <= triangle budget: barricade 264/300 tris, beam 204/400 tris, train_blue 636/1500 tris, train_orange 636/1500 tris)
+  - AST-03: PASS (all models < 35 KB, far below 1 MB budget)
+  - AST-04: PASS (0 textures, exactly 4 palette materials per model)
+  - AST-06: PASS (loads and inspectable in ModelViewerScreen turntable)
+  - AST-07: PASS (dimensions match GDD hitboxes within ±5%)
+  - AST-08: PASS (pivot at base centre, train front faces -Y in Blender, evidence in docs/evidence/phase-5/)
+  - SPN-01: PASS (over 10,000 seeded rows every row has a survivable option)
+  - SPN-02: PASS (every row with a train has a train-free lane)
+  - SPN-03: PASS (no beam closer than speed * 0.9s after a barricade in the same lane)
+  - SPN-04: PASS (lane change distance reachable within the gap)
+  - SPN-05: PASS (determinism per seed over 2,000 rows)
+  - SPN-06: PASS (grace distance 40m respected at game start)
+  - SPN-07: PASS (row gap formula respected: gap >= max(14, speed * 0.9))
+  - SPN-08: PASS (tier gating respected across all 10,000 rows)
+  - SPN-09: PASS (all 33 patterns in PatternLibrary used)
+  - SPN-10: PASS (no two obstacles overlap in the same lane)
+  - GAM-13: PASS (no obstacles before 60m)
+  - GAM-14: PASS (nothing spawns within 40m of start)
+  - GAM-15: PASS (all three obstacle types appear within 2,000m)
 - Phase 4 (Milestone M1 / v0.1.0): 28/28 passed (8 pending device tests GAM-05..12, BLD-04, PRF-02)
   - BLD-01: PASS (assembleDebug built app-debug.apk)
   - BLD-02: PASS (30/30 unit tests passed: GameConfigTest, PureKotlinCoreTest, GameStateMachineTest, TrackSystemTest, EndlessRunnerIntegrationTest, SwipeDetectorTest, PlayerControllerTest)
