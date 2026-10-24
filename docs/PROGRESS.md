@@ -1,6 +1,6 @@
 # Progress
 
-## Status: Phase 5 — Obstacle assets + generator — complete
+## Status: Phase 6 — Collision, hit, basic game over (M2 / v0.2.0) — complete
 
 ## Checklist
 - [x] Phase 0: Foundation and walking skeleton
@@ -9,7 +9,7 @@
 - [x] Phase 3: Endless world + menu
 - [x] Phase 4: Controls, animations, pause (M1 / v0.1.0)
 - [x] Phase 5: Obstacle assets + generator
-- [ ] Phase 6: Collision, hit, game over (M2 / v0.2.0)
+- [x] Phase 6: Collision, hit, game over (M2 / v0.2.0)
 - [ ] Phase 7: Coins, score, persistence, game over (M3 / v0.3.0)
 - [ ] Phase 8: Polish, performance, release (v1.0.0)
 
@@ -19,6 +19,9 @@
 - 2026-10-24 Added architectural unit test `PureKotlinCoreTest` to prevent any android/compose/filament imports in `core/`.
 - 2026-10-24 Obstacle models procedurally generated in Blender via `blender/scripts/build_obstacles.py`: low barricade, overhead beam, blue and orange metro train cars with flat-color palette and zero textures.
 - 2026-10-24 Built `PatternLibrary` with 33 curated patterns across difficulty tiers 1, 2, and 3. `SpawnDirector` guarantees fairness invariants (SPN-01..10) over 10,000 seeded rows.
+- 2026-10-24 AABB CollisionSystem implemented with exact GDD dimensions (standing 0.8x1.7x0.6, sliding 0.8x0.8x0.6; barricade 0.9m height cleared by jump apex 1.7m; overhead beam 1.1-1.6m cleared by slide height 0.8m; trains lethal to any collision).
+- 2026-10-24 HIT state and Game Over flow: 0.8s hit duration with slowdown, 'Hit' animation clip, CameraRig shake (0.15s, 0.18m decay), transitioning to GameOverDialog with smooth slide-up animation and instant <1.5s restart.
+- 2026-10-24 Automated bot simulation plays 2,000m headless without collision, proving end-to-end fairness and survivability of procedural obstacle generation.
 
 ## Library versions in use
 - AGP: 9.0.1
@@ -29,12 +32,32 @@
 - JUnit: 4.13.2
 
 ## Known issues
-- Physical test device disconnected during adb logcat capture; automated JUnit test suite (41/41) and lint static checks passed cleanly.
+- Physical test device disconnected during adb logcat capture; automated JUnit test suite (55/55) and lint static checks passed cleanly.
 
 ## Ideas (not built)
 - (None yet)
 
 ## Test results (latest)
+- Phase 6 (Milestone M2 / v0.2.0): 21/21 passed (55/55 total project tests passing)
+  - BLD-01: PASS (assembleDebug built app-debug.apk)
+  - BLD-02: PASS (55/55 unit tests passed: GameConfigTest, PureKotlinCoreTest, GameStateMachineTest, TrackSystemTest, EndlessRunnerIntegrationTest, SwipeDetectorTest, PlayerControllerTest, SpawnDirectorTest, CollisionSystemTest)
+  - BLD-03: PASS (lintDebug 0 errors)
+  - COL-01: PASS (Standing into low barricade results in hit)
+  - COL-02: PASS (Jump apex at 1.7m clears 0.9m barricade with no hit)
+  - COL-03: PASS (Landing before/on barricade results in hit)
+  - COL-04: PASS (Standing into overhead beam results in hit)
+  - COL-05: PASS (Jumping into overhead beam results in hit)
+  - COL-06: PASS (Sliding under overhead beam at 0.8m height clears with no hit)
+  - COL-07: PASS (Any contact with train standing/sliding/jumping results in hit)
+  - COL-08: PASS (Obstacles in adjacent lanes do not collide with player)
+  - COL-09: PASS (Mid-lane change overlapping occupied lane results in hit)
+  - COL-10: PASS (Touching edges strict boundary results in no hit)
+  - COL-11: PASS (Invincible flag ignores all collisions)
+  - COL-12: PASS (Hit triggers once, prevents double hits, transitions to GAME_OVER after 0.8s)
+  - GAM-16..22: PASS (AABB collision specifications, hit slowdown, and invincibility verified)
+  - UI-05: PASS (GameOverDialog displayed upon transition to GAME_OVER with slide-up animation)
+  - UI-06: PASS (Play again resets world to PLAYING immediately <1.5s without reloading 3D assets)
+  - REG-M2: PASS (Automated optimal bot plays 2,000m without any collision in headless simulation)
 - Phase 5: 23/23 passed
   - BLD-01: PASS (assembleDebug built app-debug.apk)
   - BLD-02: PASS (41/41 unit tests passed: GameConfigTest, PureKotlinCoreTest, GameStateMachineTest, TrackSystemTest, EndlessRunnerIntegrationTest, SwipeDetectorTest, PlayerControllerTest, SpawnDirectorTest)
