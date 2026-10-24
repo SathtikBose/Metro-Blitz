@@ -111,8 +111,9 @@ class SpawnDirector(
 
     /**
      * Updates obstacle scrolling, despawns passed obstacles, and spawns new rows up to the spawn horizon.
+     * Optionally spawns coin arcs over barricades and coin lines/zig-zags in free lanes.
      */
-    fun update(speed: Float, dt: Float, distanceMetres: Float) {
+    fun update(speed: Float, dt: Float, distanceMetres: Float, coinSystem: CoinSystem? = null) {
         // 1. Move active obstacles toward player (in +Z direction)
         val it = activeObstacles.iterator()
         while (it.hasNext()) {
@@ -138,22 +139,55 @@ class SpawnDirector(
             val pattern = selectPattern(tier, speed, lastSpawnedRow)
             val spawnZ = -(nextSpawnDistance - distanceMetres)
 
+            val freeLanes = mutableListOf<Int>()
+
             // Spawn obstacles in lanes
             for (lane in 0 until GameConfig.LANE_COUNT) {
                 val type = pattern.getLane(lane)
                 if (type != null) {
-                    activeObstacles.add(
-                        Obstacle(
-                            id = nextObstacleId++,
-                            type = type,
-                            lane = lane,
-                            z = spawnZ
-                        )
+                    val obs = Obstacle(
+                        id = nextObstacleId++,
+                        type = type,
+                        lane = lane,
+                        z = spawnZ
                     )
+                    activeObstacles.add(obs)
+
+                    // Arc of coins over barricade
+                    if (type == ObstacleType.BARRICADE_LOW && coinSystem != null) {
+                        coinSystem.spawnArcOverBarricade(obs)
+                    }
+                } else {
+                    freeLanes.add(lane)
                 }
             }
 
+            // Spawn coin lines in a safe lane of the row with 60% probability
+            if (coinSystem != null && freeLanes.isNotEmpty() && rng.nextFloat() < 0.60f) {
+                val safeLane = freeLanes[rng.nextInt(0, freeLanes.size)]
+                coinSystem.spawnLine(
+                    lane = safeLane,
+                    startZ = spawnZ,
+                    count = 5,
+                    spacingZ = 2.0f,
+                    obstacles = activeObstacles
+                )
+            }
+
             val gap = calculateRowGap(speed, pattern)
+
+            // In Tier 2+ with large gaps (>20m), spawn zig-zag in the gap with 40% probability
+            if (coinSystem != null && tier >= 2 && gap >= 20.0f && rng.nextFloat() < 0.40f) {
+                val zigZagZ = spawnZ - (gap * 0.4f)
+                coinSystem.spawnZigZag(
+                    startLane = rng.nextInt(0, GameConfig.LANE_COUNT),
+                    startZ = zigZagZ,
+                    count = 5,
+                    spacingZ = 3.0f,
+                    obstacles = activeObstacles
+                )
+            }
+
             nextSpawnDistance += gap
             lastSpawnedRow = pattern
             lastRowHadTrain = pattern.hasTrain

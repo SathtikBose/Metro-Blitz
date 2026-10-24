@@ -20,6 +20,7 @@ class GameWorld(
     )
 
     val spawnDirector = SpawnDirector(seed)
+    val coinSystem = CoinSystem(seed)
 
     var speed: Float = GameConfig.START_SPEED
     var distanceMetres: Float = 0.0f
@@ -41,7 +42,10 @@ class GameWorld(
                 score = ScoreSystem.calculateScore(distanceMetres, coinsCollected)
                 player.update(dt)
                 trackSystem.update(speed, dt)
-                spawnDirector.update(speed, dt, distanceMetres)
+                spawnDirector.update(speed, dt, distanceMetres, coinSystem)
+                coinSystem.update(speed, dt, player)
+                coinsCollected = coinSystem.coinsCollectedThisRun
+                score = ScoreSystem.calculateScore(distanceMetres, coinsCollected)
 
                 val hit = CollisionSystem.checkCollision(
                     player = player,
@@ -137,6 +141,7 @@ class GameWorld(
         player.reset()
         trackSystem.reset(seed)
         spawnDirector.reset(seed)
+        coinSystem.reset(seed)
         stateMachine.reset(GameState.PLAYING)
     }
 
@@ -152,6 +157,7 @@ class GameWorld(
         player.reset()
         trackSystem.reset(seed)
         spawnDirector.reset(seed)
+        coinSystem.reset(seed)
         stateMachine.reset(GameState.MENU)
     }
 
@@ -171,7 +177,10 @@ class GameWorld(
             laneChangeDirection = player.laneChangeDirection,
             countdownRemaining = countdownRemaining,
             activeObstacles = spawnDirector.activeObstacles,
-            hitTimer = hitTimer
+            hitTimer = hitTimer,
+            activeCoins = coinSystem.activeCoins,
+            coinSpinAngleDegrees = coinSystem.spinAngleDegrees,
+            coinBobOffsetY = coinSystem.bobOffsetY
         )
     }
 }

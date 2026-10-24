@@ -51,8 +51,9 @@ fun GameScene(
     }
     val modelPool = remember { ModelPool(modelLoader) }
     val obstaclePool = remember { ObstaclePool(engine, modelLoader) }
+    val coinPool = remember { CoinPool(modelLoader) }
     val allSceneNodes: List<Node> = remember {
-        listOf(playerNode.modelNode, blobShadowNode) + modelPool.allNodes + obstaclePool.allNodes
+        listOf(playerNode.modelNode, blobShadowNode) + modelPool.allNodes + obstaclePool.allNodes + coinPool.coinNodes
     }
 
     var lastClip by remember { mutableStateOf("") }
@@ -84,6 +85,9 @@ fun GameScene(
 
                     // Synchronize obstacles and debug hitboxes
                     obstaclePool.sync(snapshot.activeObstacles, showHitboxes = GameConfig.DEBUG_SHOW_HITBOXES)
+
+                    // Synchronize coins
+                    coinPool.update(snapshot.activeCoins, snapshot.coinSpinAngleDegrees, snapshot.coinBobOffsetY)
 
                     // Synchronize character position
                     playerNode.modelNode.position = Position(x = snapshot.playerX, y = snapshot.playerY, z = snapshot.playerZ)

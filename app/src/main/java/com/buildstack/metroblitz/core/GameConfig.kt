@@ -72,6 +72,12 @@ object GameConfig {
     const val TRAIN_DEPTH = 10.0f
 
     const val COIN_RADIUS = 0.5f
+    const val COIN_GROUND_Y = 0.9f
+    const val COIN_ARC_PEAK_Y = 2.2f
+    const val COIN_SPIN_SPEED_DEG_PER_SEC = 180.0f
+    const val COIN_SCORE_VALUE = 10
+    const val COIN_POP_DURATION_SECONDS = 0.15f
+    const val COIN_POOL_SIZE = 40
     const val HIT_DURATION_SECONDS = 0.8f
     const val RESUME_COUNTDOWN_SECONDS = 3.0f
 
