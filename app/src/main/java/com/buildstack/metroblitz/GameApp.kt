@@ -1,6 +1,7 @@
 package com.buildstack.metroblitz
 
 import android.app.Application
+import com.buildstack.metroblitz.data.DataStoreScoreRepository
 import com.buildstack.metroblitz.data.ScoreRepository
 import com.buildstack.metroblitz.data.SettingsRepository
 
@@ -24,6 +25,6 @@ class GameApp : Application() {
         super.onCreate()
         instance = this
         settingsRepository = SettingsRepository(this)
-        scoreRepository = ScoreRepository(this)
+        scoreRepository = DataStoreScoreRepository(this)
     }
 }

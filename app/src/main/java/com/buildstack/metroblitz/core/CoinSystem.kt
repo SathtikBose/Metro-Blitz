@@ -58,8 +58,9 @@ class CoinSystem(
     /**
      * Spawns a parabolic arc of coins over a low barricade.
      * 7 coins: 3 on ascent, 1 at apex (y=2.2m), 3 on descent.
+     * Checks against all active obstacles to guarantee zero overlap.
      */
-    fun spawnArcOverBarricade(barricade: Obstacle) {
+    fun spawnArcOverBarricade(barricade: Obstacle, obstacles: List<Obstacle> = listOf(barricade)) {
         val lane = barricade.lane
         val centerZ = barricade.z
 
@@ -75,6 +76,8 @@ class CoinSystem(
             GameConfig.COIN_GROUND_Y
         )
 
+        val allObstacles = if (obstacles.contains(barricade)) obstacles else obstacles + barricade
+
         for (i in offsets.indices) {
             val coin = Coin(
                 id = nextCoinId++,
@@ -82,8 +85,8 @@ class CoinSystem(
                 z = centerZ + offsets[i],
                 y = heights[i]
             )
-            // Safety check: ensure no overlap with the barricade
-            if (!coin.intersects(barricade)) {
+            // Safety check: ensure no overlap with ANY obstacle in the world
+            if (allObstacles.none { coin.intersects(it) }) {
                 activeCoins.add(coin)
             }
         }

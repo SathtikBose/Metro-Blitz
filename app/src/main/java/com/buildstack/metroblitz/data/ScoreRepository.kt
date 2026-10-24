@@ -84,11 +84,6 @@ open class DataStoreScoreRepository(private val context: Context) : ScoreReposit
 }
 
 /**
- * Default ScoreRepository alias for standard instantiation.
- */
-class ScoreRepository(context: Context) : DataStoreScoreRepository(context)
-
-/**
  * In-memory test double of [ScoreRepository] for deterministic unit tests (SCR-05..08).
  */
 class FakeScoreRepository(

@@ -153,9 +153,12 @@ class SpawnDirector(
                     )
                     activeObstacles.add(obs)
 
+                    // Enforce CON-03: Remove any existing coin that would overlap this newly spawned obstacle
+                    coinSystem?.activeCoins?.removeAll { it.intersects(obs) }
+
                     // Arc of coins over barricade
                     if (type == ObstacleType.BARRICADE_LOW && coinSystem != null) {
-                        coinSystem.spawnArcOverBarricade(obs)
+                        coinSystem.spawnArcOverBarricade(obs, activeObstacles)
                     }
                 } else {
                     freeLanes.add(lane)
