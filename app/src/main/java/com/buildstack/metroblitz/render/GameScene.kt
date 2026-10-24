@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import com.buildstack.metroblitz.core.GameConfig
 import com.buildstack.metroblitz.core.GameState
@@ -62,7 +63,7 @@ fun GameScene(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(GameConfig.COLOR_SKY_BLUE))
+            .background(Brush.verticalGradient(SceneStyle.skyGradient))
     ) {
         Scene(
             modifier = Modifier.fillMaxSize(),
