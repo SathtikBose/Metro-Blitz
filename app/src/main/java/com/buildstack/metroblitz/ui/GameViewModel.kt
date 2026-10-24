@@ -56,6 +56,11 @@ class GameViewModel(
         GameApp.instance.soundManager
     } catch (_: Throwable) {
         null
+    },
+    val hapticHelper: com.buildstack.metroblitz.util.HapticHelper? = try {
+        GameApp.instance.hapticHelper
+    } catch (_: Throwable) {
+        null
     }
 ) : ViewModel() {
     val world = GameWorld()
@@ -95,6 +100,7 @@ class GameViewModel(
             viewModelScope.launch {
                 repo.vibrationOn.collect { on ->
                     _uiState.value = _uiState.value.copy(vibrationOn = on)
+                    hapticHelper?.vibrationEnabled = on
                 }
             }
         }
@@ -207,10 +213,11 @@ class GameViewModel(
             previousCountdownSecs = countdownSecs
         }
 
-        // SFX on hit
+        // SFX and haptics on hit
         if (snapshot.state == GameState.HIT && previousState != GameState.HIT) {
             soundManager?.playHit()
             soundManager?.pauseMusic()
+            hapticHelper?.vibrateHit()
         }
 
         // Music resume when transitioning into PLAYING

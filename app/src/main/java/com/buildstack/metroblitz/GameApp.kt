@@ -5,6 +5,7 @@ import com.buildstack.metroblitz.audio.SoundManager
 import com.buildstack.metroblitz.data.DataStoreScoreRepository
 import com.buildstack.metroblitz.data.ScoreRepository
 import com.buildstack.metroblitz.data.SettingsRepository
+import com.buildstack.metroblitz.util.HapticHelper
 
 /**
  * Application class for Metro Blitz.
@@ -25,11 +26,15 @@ class GameApp : Application() {
     lateinit var soundManager: SoundManager
         private set
 
+    lateinit var hapticHelper: HapticHelper
+        private set
+
     override fun onCreate() {
         super.onCreate()
         instance = this
         settingsRepository = SettingsRepository(this)
         scoreRepository = DataStoreScoreRepository(this)
         soundManager = SoundManager(this)
+        hapticHelper = HapticHelper(this)
     }
 }
