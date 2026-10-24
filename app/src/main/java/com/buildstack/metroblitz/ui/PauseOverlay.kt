@@ -1,8 +1,6 @@
 package com.buildstack.metroblitz.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +15,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,11 +42,7 @@ fun PauseOverlay(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(GameConfig.COLOR_DEEP_NAVY).copy(alpha = 0.75f))
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            ) { /* Consume touches on scrim */ },
+            .background(Color(GameConfig.COLOR_DEEP_NAVY).copy(alpha = 0.75f)),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -57,10 +50,6 @@ fun PauseOverlay(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .background(Color.White, shape = RoundedCornerShape(20.dp))
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) { /* Consume touches on card */ }
                 .padding(32.dp)
         ) {
             Text(
