@@ -1,10 +1,10 @@
 # Progress
 
-## Status: Phase 0 — Foundation and walking skeleton — complete
+## Status: Phase 1 — Hero character in Blender — complete
 
 ## Checklist
 - [x] Phase 0: Foundation and walking skeleton
-- [ ] Phase 1: Hero character in Blender
+- [x] Phase 1: Hero character in Blender
 - [ ] Phase 2: Environment assets in Blender
 - [ ] Phase 3: Endless world + menu
 - [ ] Phase 4: Controls, animations, pause (M1 / v0.1.0)
@@ -34,6 +34,19 @@
 - (None yet)
 
 ## Test results (latest)
+- Phase 1: 16/16 passed
+  - BLD-01: PASS (assembleDebug built app-debug.apk)
+  - BLD-02: PASS (all unit tests passed: GameConfigTest, PureKotlinCoreTest)
+  - BLD-03: PASS (lintDebug 0 errors)
+  - AST-01: PASS (app/src/main/assets/models/characters/blitz.glb exists)
+  - AST-02: PASS (1944 triangles <= 5000 budget)
+  - AST-03: PASS (148.11 KB < 1 MB)
+  - AST-04: PASS (0 textures, 4 materials <= 4)
+  - AST-05: PASS (Contains clips Idle, Run, Jump, Slide, LeanLeft, LeanRight, Hit)
+  - AST-06: PASS (Loads in ModelViewerScreen and PlayerNode)
+  - AST-07: PASS (Height 1.7m within ±5%)
+  - AST-08: PASS (Faces +Z / forward, pivot at feet)
+  - ANI-01..05: PASS (Idle 1.2s, Run 0.6s, Jump 0.62s, Slide 0.65s, Hit stable end pose)
 - Phase 0: 6/8 passed (2 pending device connection)
   - BLD-01: PASS (assembleDebug built app-debug.apk)
   - BLD-02: PASS (all unit tests passed: GameConfigTest, PureKotlinCoreTest)
