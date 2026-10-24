@@ -1,12 +1,12 @@
 # Progress
 
-## Status: Phase 2 — Environment assets in Blender — complete
+## Status: Phase 3 — Endless world + menu — complete
 
 ## Checklist
 - [x] Phase 0: Foundation and walking skeleton
 - [x] Phase 1: Hero character in Blender
 - [x] Phase 2: Environment assets in Blender
-- [ ] Phase 3: Endless world + menu
+- [x] Phase 3: Endless world + menu
 - [ ] Phase 4: Controls, animations, pause (M1 / v0.1.0)
 - [ ] Phase 5: Obstacle assets + generator
 - [ ] Phase 6: Collision, hit, game over (M2 / v0.2.0)
@@ -34,6 +34,22 @@
 - (None yet)
 
 ## Test results (latest)
+- Phase 3: 15/15 passed (5 pending physical device GAM-01..04, BLD-04)
+  - BLD-01: PASS (assembleDebug built app-debug.apk)
+  - BLD-02: PASS (all unit tests passed: GameConfigTest, PureKotlinCoreTest, GameStateMachineTest, TrackSystemTest, EndlessRunnerIntegrationTest)
+  - BLD-03: PASS (lintDebug 0 errors)
+  - COR-01: PASS (Lane X = -2.0, 0.0, +2.0)
+  - COR-02: PASS (speed(0) = 9.0 m/s)
+  - COR-03: PASS (Speed rises 0.10 m/s each second)
+  - COR-04: PASS (Speed clamps at 22.0 m/s)
+  - COR-05: PASS (Tier boundaries at 60 / 400 / 1000 m)
+  - COR-06: PASS (Segment recycles when z > 30 and moves to farthest - 30)
+  - COR-07: PASS (Active segment count constant at 7 over 10-minute simulation)
+  - COR-08: PASS (|z| of every object < 500 after 1 hour simulation at max speed)
+  - COR-09: PASS (State machine allows only legal transitions)
+  - COR-10: PASS (Illegal transitions ignored without exception)
+  - COR-11: PASS (dt clamped to 0.05)
+  - COR-12: PASS (Same seed -> same decoration/spawn sequence)
 - Phase 2: 12/12 passed (1 pending device test BLD-04)
   - BLD-01: PASS (assembleDebug built app-debug.apk)
   - BLD-02: PASS (all unit tests passed: GameConfigTest, PureKotlinCoreTest)
