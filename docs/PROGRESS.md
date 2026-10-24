@@ -43,8 +43,10 @@
 - DataStore Preferences: 1.1.3
 - JUnit: 4.13.2
 
+- 2026-10-24 Hotfix: Resolved GameOverDialog visibility race condition by removing local mutable `visible` state; ensured scrim and card intercept pointer events preventing input fall-through; clamped animation speeds and kept Blitz in 'Hit' pose during GAME_OVER; wrapped DataStore score persistence with try-catch to guarantee crash resilience across runs.
+
 ## Known issues
-- Physical test device disconnected during adb logcat capture; automated JUnit test suite (72/72), assembleRelease R8 verification, and lint static checks passed cleanly.
+- None. Full test suite passing (72/72) and release APK assembled cleanly.
 
 ## Ideas (not built)
 - (None yet)

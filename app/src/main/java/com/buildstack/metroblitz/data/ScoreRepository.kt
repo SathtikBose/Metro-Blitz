@@ -67,12 +67,16 @@ open class DataStoreScoreRepository(private val context: Context) : ScoreReposit
     override suspend fun getTotalCoins(): Int = totalCoins.first()
 
     override suspend fun saveRunResult(score: Int, coinsThisRun: Int) {
-        dataStore.edit { prefs ->
-            val currentBest = prefs[KEY_BEST_SCORE] ?: 0
-            prefs[KEY_BEST_SCORE] = ScoreSystem.updateBestScore(score, currentBest)
+        try {
+            dataStore.edit { prefs ->
+                val currentBest = prefs[KEY_BEST_SCORE] ?: 0
+                prefs[KEY_BEST_SCORE] = ScoreSystem.updateBestScore(score, currentBest)
 
-            val currentCoins = prefs[KEY_TOTAL_COINS] ?: 0
-            prefs[KEY_TOTAL_COINS] = currentCoins + coinsThisRun.coerceAtLeast(0)
+                val currentCoins = prefs[KEY_TOTAL_COINS] ?: 0
+                prefs[KEY_TOTAL_COINS] = currentCoins + coinsThisRun.coerceAtLeast(0)
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("ScoreRepo", "Failed to save run result", e)
         }
     }
 

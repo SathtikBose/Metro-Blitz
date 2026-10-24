@@ -171,6 +171,7 @@ class GameViewModel(
         world.reset()
         soundManager?.startMusic()
         previousCoins = 0
+        previousState = GameState.PLAYING
         _uiState.value = _uiState.value.copy(
             gameState = GameState.PLAYING,
             score = 0,
@@ -184,6 +185,7 @@ class GameViewModel(
         world.toMenu()
         soundManager?.pauseMusic()
         previousCoins = 0
+        previousState = GameState.MENU
         _uiState.value = _uiState.value.copy(
             gameState = GameState.MENU,
             score = 0,
@@ -230,7 +232,11 @@ class GameViewModel(
             val isNewBestScore = snapshot.score > _uiState.value.bestScore && snapshot.score > 0
             _uiState.value = _uiState.value.copy(isNewBest = isNewBestScore)
             viewModelScope.launch {
-                scoreRepository.saveRunResult(snapshot.score, snapshot.coins)
+                try {
+                    scoreRepository.saveRunResult(snapshot.score, snapshot.coins)
+                } catch (e: Exception) {
+                    android.util.Log.e("GameViewModel", "Failed to save run result", e)
+                }
             }
         }
         previousState = snapshot.state

@@ -1,12 +1,10 @@
 package com.buildstack.metroblitz.ui
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,11 +21,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,7 +35,7 @@ import com.buildstack.metroblitz.core.GameConfig
 
 /**
  * Game over popup showing run score, best score (with NEW BEST! indicator), and Play Again / Home buttons.
- * Slides up smoothly (0.25s) when presented (UI-05, UI-06, UI-08, UI-09).
+ * Renders immediately over the gameplay scene with a touch-consuming scrim (UI-05, UI-06, UI-08, UI-09).
  */
 @Composable
 fun GameOverDialog(
@@ -53,133 +47,127 @@ fun GameOverDialog(
     onHome: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var visible by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        visible = true
-    }
-
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(GameConfig.COLOR_DEEP_NAVY).copy(alpha = 0.75f)),
+            .background(Color(GameConfig.COLOR_DEEP_NAVY).copy(alpha = 0.75f))
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) { /* Consume touches on scrim so they do not fall through to the 3D scene */ },
         contentAlignment = Alignment.Center
     ) {
-        AnimatedVisibility(
-            visible = visible,
-            enter = slideInVertically(
-                initialOffsetY = { fullHeight -> fullHeight / 2 },
-                animationSpec = tween(durationMillis = 250)
-            ) + fadeIn(animationSpec = tween(250))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .background(Color.White, shape = RoundedCornerShape(24.dp))
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) { /* Consume touches on card */ }
+                .padding(32.dp)
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+            Image(
+                painter = painterResource(id = R.drawable.game_icon),
+                contentDescription = "Game Icon",
                 modifier = Modifier
-                    .background(Color.White, shape = RoundedCornerShape(24.dp))
-                    .padding(32.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.game_icon),
-                    contentDescription = "Game Icon",
+                    .size(68.dp)
+                    .clip(CircleShape)
+                    .border(2.dp, Color(GameConfig.COLOR_CORAL_RED), CircleShape)
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = "OOPS!",
+                fontSize = 38.sp,
+                fontWeight = FontWeight.Black,
+                color = Color(GameConfig.COLOR_CORAL_RED)
+            )
+
+            if (isNewBest || (score >= bestScore && score > 0)) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Box(
                     modifier = Modifier
-                        .size(68.dp)
-                        .clip(CircleShape)
-                        .border(2.dp, Color(GameConfig.COLOR_CORAL_RED), CircleShape)
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Text(
-                    text = "OOPS!",
-                    fontSize = 38.sp,
-                    fontWeight = FontWeight.Black,
-                    color = Color(GameConfig.COLOR_CORAL_RED)
-                )
-
-                if (isNewBest || (score >= bestScore && score > 0)) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                color = Color(GameConfig.COLOR_MINT_GREEN),
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .padding(horizontal = 12.dp, vertical = 4.dp)
-                    ) {
-                        Text(
-                            text = "NEW BEST!",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Black,
-                            color = Color(GameConfig.COLOR_DEEP_NAVY)
+                        .background(
+                            color = Color(GameConfig.COLOR_MINT_GREEN),
+                            shape = RoundedCornerShape(8.dp)
                         )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text(
-                    text = "Score: $score",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Black,
-                    color = Color(GameConfig.COLOR_DEEP_NAVY)
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = "Best: $bestScore",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(GameConfig.COLOR_SLATE)
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "🪙 ",
-                        fontSize = 16.sp
-                    )
-                    Text(
-                        text = "Coins: $coins",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(GameConfig.COLOR_ORANGE)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Button(
-                    onClick = onPlayAgain,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(GameConfig.COLOR_SUNNY_YELLOW)),
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.width(220.dp).height(54.dp)
+                        .padding(horizontal = 12.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        text = "PLAY AGAIN",
-                        fontSize = 20.sp,
+                        text = "NEW BEST!",
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Black,
                         color = Color(GameConfig.COLOR_DEEP_NAVY)
                     )
                 }
+            }
 
-                Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-                Button(
-                    onClick = onHome,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(GameConfig.COLOR_SLATE)),
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.width(220.dp).height(48.dp)
-                ) {
-                    Text(
-                        text = "Home",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                }
+            Text(
+                text = "Score: $score",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Black,
+                color = Color(GameConfig.COLOR_DEEP_NAVY)
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "Best: $bestScore",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(GameConfig.COLOR_SLATE)
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "🪙 ",
+                    fontSize = 16.sp
+                )
+                Text(
+                    text = "Coins: $coins",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(GameConfig.COLOR_ORANGE)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = onPlayAgain,
+                colors = ButtonDefaults.buttonColors(containerColor = Color(GameConfig.COLOR_SUNNY_YELLOW)),
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier.width(220.dp).height(54.dp)
+            ) {
+                Text(
+                    text = "PLAY AGAIN",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Black,
+                    color = Color(GameConfig.COLOR_DEEP_NAVY)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(
+                onClick = onHome,
+                colors = ButtonDefaults.buttonColors(containerColor = Color(GameConfig.COLOR_SLATE)),
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier.width(220.dp).height(48.dp)
+            ) {
+                Text(
+                    text = "Home",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
             }
         }
     }

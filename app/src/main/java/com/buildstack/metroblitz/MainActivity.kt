@@ -80,7 +80,10 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        swipeDetector.onTouchEvent(ev)
+        val currentState = viewModel.uiState.value.gameState
+        if (currentState == GameState.PLAYING || currentState == GameState.MENU) {
+            swipeDetector.onTouchEvent(ev)
+        }
         return super.dispatchTouchEvent(ev)
     }
 

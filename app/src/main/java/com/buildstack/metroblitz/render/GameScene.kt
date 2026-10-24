@@ -96,7 +96,7 @@ fun GameScene(
 
                     // Determine character animation clip based on player action
                     val targetClip = when {
-                        snapshot.state == GameState.HIT -> AssetCatalog.CLIP_HIT
+                        snapshot.state == GameState.HIT || snapshot.state == GameState.GAME_OVER -> AssetCatalog.CLIP_HIT
                         snapshot.state == GameState.MENU -> AssetCatalog.CLIP_IDLE
                         snapshot.playerAction == PlayerAction.JUMPING -> AssetCatalog.CLIP_JUMP
                         snapshot.playerAction == PlayerAction.SLIDING -> AssetCatalog.CLIP_SLIDE
@@ -105,7 +105,11 @@ fun GameScene(
                     }
 
                     val isLoop = (targetClip == AssetCatalog.CLIP_RUN || targetClip == AssetCatalog.CLIP_IDLE)
-                    val animSpeed = if (targetClip == AssetCatalog.CLIP_RUN) (snapshot.speed / GameConfig.START_SPEED) else 1.0f
+                    val animSpeed = if (targetClip == AssetCatalog.CLIP_RUN) {
+                        (snapshot.speed / GameConfig.START_SPEED).coerceIn(0.5f, 2.5f)
+                    } else {
+                        1.0f
+                    }
 
                     if (targetClip != lastClip || (targetClip == AssetCatalog.CLIP_RUN && kotlin.math.abs(animSpeed - lastAnimSpeed) > 0.05f)) {
                         playerNode.play(targetClip, loop = isLoop, speed = animSpeed)
