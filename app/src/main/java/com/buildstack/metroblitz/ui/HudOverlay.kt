@@ -119,31 +119,5 @@ fun HudOverlay(
                 color = Color.White
             )
         }
-
-        // Bottom-left: Debug overlay (FPS, speed, distance, hitbox toggle)
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(bottom = 8.dp)
-                .background(
-                    color = Color(GameConfig.COLOR_DEEP_NAVY).copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .padding(horizontal = 10.dp, vertical = 4.dp)
-        ) {
-            Text(
-                text = "FPS: $fps | SPD: ${"%.1f".format(speed)} m/s",
-                fontSize = 12.sp,
-                color = Color.White.copy(alpha = 0.9f)
-            )
-            Text(
-                text = "DIST: ${distanceMetres.toInt()}m | BOXES: ${if (GameConfig.DEBUG_SHOW_HITBOXES) "ON" else "OFF"}",
-                fontSize = 12.sp,
-                color = Color.White.copy(alpha = 0.9f),
-                modifier = Modifier.clickable {
-                    GameConfig.DEBUG_SHOW_HITBOXES = !GameConfig.DEBUG_SHOW_HITBOXES
-                }
-            )
-        }
     }
 }
