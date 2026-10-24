@@ -77,6 +77,7 @@ object GameConfig {
 
     // Debug flags
     var DEBUG_SHOW_HITBOXES: Boolean = false
+    var DEBUG_INVINCIBLE: Boolean = false
 
     // Palette hex colors (ARGB long/int representations)
     const val COLOR_SKY_BLUE = 0xFF4FC3F7
