@@ -1,11 +1,11 @@
 # Progress
 
-## Status: Phase 1 — Hero character in Blender — complete
+## Status: Phase 2 — Environment assets in Blender — complete
 
 ## Checklist
 - [x] Phase 0: Foundation and walking skeleton
 - [x] Phase 1: Hero character in Blender
-- [ ] Phase 2: Environment assets in Blender
+- [x] Phase 2: Environment assets in Blender
 - [ ] Phase 3: Endless world + menu
 - [ ] Phase 4: Controls, animations, pause (M1 / v0.1.0)
 - [ ] Phase 5: Obstacle assets + generator
@@ -34,6 +34,19 @@
 - (None yet)
 
 ## Test results (latest)
+- Phase 2: 12/12 passed (1 pending device test BLD-04)
+  - BLD-01: PASS (assembleDebug built app-debug.apk)
+  - BLD-02: PASS (all unit tests passed: GameConfigTest, PureKotlinCoreTest)
+  - BLD-03: PASS (lintDebug 0 errors)
+  - AST-01: PASS (all 8 models in assets/models/environment/: track_segment, building_a-d, lamp_post, tree, fence)
+  - AST-02: PASS (all models <= triangle budget: track 1212/2500, b_a 204/400, b_b 148/400, b_c 156/400, b_d 108/400, lamp 108/150, tree 148/150, fence 60/100)
+  - AST-03: PASS (all models < 1 MB: largest track_segment 55 KB)
+  - AST-04: PASS (0 textures, <= 4 materials on all models)
+  - AST-06: PASS (loads and displays in ModelViewerScreen under Street and Props tabs)
+  - AST-07: PASS (dimensions within ±5% of spec)
+  - ENV-01: PASS (3 segments tile seamlessly with 0 gap or z-fighting; docs/evidence/phase-2/env_three_segments_tiling.png)
+  - ENV-02: PASS (buildings & props along platforms/sides at |x| >= 4 leaving tracks unobstructed)
+  - ENV-03: PASS (palette colors match spec; bright, sunny, cartoonish street look; docs/evidence/phase-2/env_street_perspective.png)
 - Phase 1: 16/16 passed
   - BLD-01: PASS (assembleDebug built app-debug.apk)
   - BLD-02: PASS (all unit tests passed: GameConfigTest, PureKotlinCoreTest)
