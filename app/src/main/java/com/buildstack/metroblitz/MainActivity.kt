@@ -7,13 +7,25 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.buildstack.metroblitz.core.GameConfig
 import com.buildstack.metroblitz.core.GameState
 import com.buildstack.metroblitz.render.GameScene
 import com.buildstack.metroblitz.theme.MetroBlitzTheme
@@ -22,6 +34,7 @@ import com.buildstack.metroblitz.ui.GameOverDialog
 import com.buildstack.metroblitz.ui.GameViewModel
 import com.buildstack.metroblitz.ui.HudOverlay
 import com.buildstack.metroblitz.ui.MenuOverlay
+import com.buildstack.metroblitz.ui.ModelViewerScreen
 import com.buildstack.metroblitz.ui.PauseOverlay
 
 class MainActivity : ComponentActivity() {
@@ -41,7 +54,16 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MetroBlitzTheme {
-                GameScreen(viewModel = viewModel)
+                var showModelViewer by remember { mutableStateOf(false) }
+
+                if (showModelViewer && BuildConfig.DEBUG) {
+                    ModelViewerScreen(onBack = { showModelViewer = false })
+                } else {
+                    GameScreen(
+                        viewModel = viewModel,
+                        onOpenModelViewer = { showModelViewer = true }
+                    )
+                }
             }
         }
     }
@@ -53,7 +75,10 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun GameScreen(viewModel: GameViewModel) {
+fun GameScreen(
+    viewModel: GameViewModel,
+    onOpenModelViewer: () -> Unit
+) {
     val uiState by viewModel.uiState.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -99,6 +124,19 @@ fun GameScreen(viewModel: GameViewModel) {
             }
             GameState.HIT -> {
                 // Transient state handled in Phase 6
+            }
+        }
+
+        // Debug Model Viewer shortcut button
+        if (BuildConfig.DEBUG && (uiState.gameState == GameState.MENU || uiState.gameState == GameState.PAUSED)) {
+            Button(
+                onClick = onOpenModelViewer,
+                colors = ButtonDefaults.buttonColors(containerColor = Color(GameConfig.COLOR_VIOLET)),
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 16.dp)
+            ) {
+                Text(text = "DEBUG: 3D VIEWER", fontSize = 12.sp, color = Color.White)
             }
         }
     }
