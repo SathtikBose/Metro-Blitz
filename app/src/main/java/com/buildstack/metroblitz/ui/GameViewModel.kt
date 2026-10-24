@@ -1,14 +1,19 @@
 package com.buildstack.metroblitz.ui
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.buildstack.metroblitz.GameApp
 import com.buildstack.metroblitz.core.GameConfig
 import com.buildstack.metroblitz.core.GameSnapshot
 import com.buildstack.metroblitz.core.GameState
 import com.buildstack.metroblitz.core.GameWorld
+import com.buildstack.metroblitz.data.FakeScoreRepository
+import com.buildstack.metroblitz.data.ScoreRepository
 import com.buildstack.metroblitz.input.Command
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 /**
  * UI State exposed to Jetpack Compose overlays.
@@ -24,17 +29,39 @@ data class UiState(
     val activeSegments: Int = GameConfig.SEGMENT_POOL_SIZE,
     val countdownSeconds: Int = 3,
     val fps: Int = 60,
-    val isInvincible: Boolean = false
+    val isInvincible: Boolean = false,
+    val isNewBest: Boolean = false
 )
 
 /**
  * Main game ViewModel managing state transitions, input commands, and UI state publication.
  */
-class GameViewModel : ViewModel() {
+class GameViewModel(
+    val scoreRepository: ScoreRepository = try {
+        GameApp.instance.scoreRepository
+    } catch (_: Throwable) {
+        FakeScoreRepository()
+    }
+) : ViewModel() {
     val world = GameWorld()
 
     private val _uiState = MutableStateFlow(UiState(gameState = GameState.MENU))
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
+
+    private var previousState: GameState = GameState.MENU
+
+    init {
+        viewModelScope.launch {
+            scoreRepository.bestScore.collect { best ->
+                _uiState.value = _uiState.value.copy(bestScore = best)
+            }
+        }
+        viewModelScope.launch {
+            scoreRepository.totalCoins.collect { total ->
+                _uiState.value = _uiState.value.copy(totalCoins = total)
+            }
+        }
+    }
 
     fun onCommand(command: Command) {
         when (command) {
@@ -74,13 +101,19 @@ class GameViewModel : ViewModel() {
             gameState = GameState.PLAYING,
             score = 0,
             coins = 0,
+            isNewBest = false,
             speed = GameConfig.START_SPEED
         )
     }
 
     fun onHome() {
         world.toMenu()
-        _uiState.value = _uiState.value.copy(gameState = GameState.MENU)
+        _uiState.value = _uiState.value.copy(
+            gameState = GameState.MENU,
+            score = 0,
+            coins = 0,
+            isNewBest = false
+        )
     }
 
     fun onFrame(rawDt: Float, currentFps: Int = 60) {
@@ -92,7 +125,18 @@ class GameViewModel : ViewModel() {
             3
         }
 
+        // On transition to GAME_OVER: persist run results and compute isNewBest
+        if (snapshot.state == GameState.GAME_OVER && previousState != GameState.GAME_OVER) {
+            val isNewBestScore = snapshot.score > _uiState.value.bestScore && snapshot.score > 0
+            _uiState.value = _uiState.value.copy(isNewBest = isNewBestScore)
+            viewModelScope.launch {
+                scoreRepository.saveRunResult(snapshot.score, snapshot.coins)
+            }
+        }
+        previousState = snapshot.state
+
         if (snapshot.score != _uiState.value.score ||
+            snapshot.coins != _uiState.value.coins ||
             snapshot.state != _uiState.value.gameState ||
             currentFps != _uiState.value.fps ||
             countdownSecs != _uiState.value.countdownSeconds ||

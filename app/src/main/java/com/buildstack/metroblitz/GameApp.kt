@@ -9,6 +9,11 @@ import com.buildstack.metroblitz.data.SettingsRepository
  * Initializes persistent repositories and global app scope dependencies.
  */
 class GameApp : Application() {
+    companion object {
+        lateinit var instance: GameApp
+            private set
+    }
+
     lateinit var settingsRepository: SettingsRepository
         private set
 
@@ -17,6 +22,7 @@ class GameApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        instance = this
         settingsRepository = SettingsRepository(this)
         scoreRepository = ScoreRepository(this)
     }
