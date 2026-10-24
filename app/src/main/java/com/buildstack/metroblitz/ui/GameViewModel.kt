@@ -38,7 +38,7 @@ class GameViewModel : ViewModel() {
         when (command) {
             Command.TAP -> {
                 if (_uiState.value.gameState == GameState.MENU) {
-                    world.state = GameState.PLAYING
+                    world.startPlaying()
                     _uiState.value = _uiState.value.copy(gameState = GameState.PLAYING)
                 }
             }
@@ -50,14 +50,14 @@ class GameViewModel : ViewModel() {
 
     fun onPauseGame() {
         if (_uiState.value.gameState == GameState.PLAYING || _uiState.value.gameState == GameState.RESUME_COUNTDOWN) {
-            world.state = GameState.PAUSED
+            world.pause()
             _uiState.value = _uiState.value.copy(gameState = GameState.PAUSED)
         }
     }
 
     fun onResumeGame() {
         if (_uiState.value.gameState == GameState.PAUSED) {
-            world.state = GameState.PLAYING
+            world.resumePlaying()
             _uiState.value = _uiState.value.copy(gameState = GameState.PLAYING)
         }
     }
@@ -73,7 +73,7 @@ class GameViewModel : ViewModel() {
     }
 
     fun onHome() {
-        world.state = GameState.MENU
+        world.toMenu()
         _uiState.value = _uiState.value.copy(gameState = GameState.MENU)
     }
 
