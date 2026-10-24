@@ -15,5 +15,16 @@
 - **Kotlin Standard Library:** Apache License 2.0 (JetBrains s.r.o.)
 - **JUnit 4:** Eclipse Public License 1.0
 
-## Audio & Typography (Planned for Release)
-- Fonts and audio assets will use strictly CC0 (Public Domain) or OFL (SIL Open Font License) resources.
+## Audio & Sound Effects
+- All audio sound effects and background music procedurally synthesized via `tools/generate_audio.py`.
+- License: Creative Commons 0 (CC0 1.0 Universal - Public Domain Dedication).
+  - `sfx_jump.wav` (upward glide)
+  - `sfx_slide.wav` (low swoop)
+  - `sfx_coin.wav` (retro arcade chime)
+  - `sfx_hit.wav` (cartoon bonk / thud)
+  - `sfx_tap.wav` (UI click)
+  - `sfx_countdown.wav` (timer tick)
+  - `bgm_main.wav` (128 BPM upbeat cartoon chiptune runner loop)
+
+## Typography
+- System bold rounded sans-serif font with fallback matching Metro Blitz cartoon aesthetic.

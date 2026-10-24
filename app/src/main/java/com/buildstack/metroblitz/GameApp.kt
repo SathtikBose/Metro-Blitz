@@ -1,6 +1,7 @@
 package com.buildstack.metroblitz
 
 import android.app.Application
+import com.buildstack.metroblitz.audio.SoundManager
 import com.buildstack.metroblitz.data.DataStoreScoreRepository
 import com.buildstack.metroblitz.data.ScoreRepository
 import com.buildstack.metroblitz.data.SettingsRepository
@@ -21,10 +22,14 @@ class GameApp : Application() {
     lateinit var scoreRepository: ScoreRepository
         private set
 
+    lateinit var soundManager: SoundManager
+        private set
+
     override fun onCreate() {
         super.onCreate()
         instance = this
         settingsRepository = SettingsRepository(this)
         scoreRepository = DataStoreScoreRepository(this)
+        soundManager = SoundManager(this)
     }
 }

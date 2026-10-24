@@ -105,11 +105,24 @@ class MainActivity : ComponentActivity() {
     override fun onPause() {
         super.onPause()
         viewModel.onPauseGame()
+        try {
+            GameApp.instance.soundManager.onPause()
+        } catch (_: Throwable) {}
+    }
+
+    override fun onResume() {
+        super.onResume()
+        try {
+            GameApp.instance.soundManager.onResume()
+        } catch (_: Throwable) {}
     }
 
     override fun onStop() {
         super.onStop()
         viewModel.onPauseGame()
+        try {
+            GameApp.instance.soundManager.onPause()
+        } catch (_: Throwable) {}
     }
 }
 
@@ -147,6 +160,12 @@ fun GameScreen(
             }
             GameState.PAUSED -> {
                 PauseOverlay(
+                    soundOn = uiState.soundOn,
+                    musicOn = uiState.musicOn,
+                    vibrationOn = uiState.vibrationOn,
+                    onToggleSound = { viewModel.onToggleSound() },
+                    onToggleMusic = { viewModel.onToggleMusic() },
+                    onToggleVibration = { viewModel.onToggleVibration() },
                     onResume = { viewModel.onResumeGame() },
                     onRestart = { viewModel.onRestartGame() },
                     onHome = { viewModel.onHome() }
