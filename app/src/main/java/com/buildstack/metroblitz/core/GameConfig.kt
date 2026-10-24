@@ -75,6 +75,9 @@ object GameConfig {
     const val HIT_DURATION_SECONDS = 0.8f
     const val RESUME_COUNTDOWN_SECONDS = 3.0f
 
+    // Debug flags
+    var DEBUG_SHOW_HITBOXES: Boolean = false
+
     // Palette hex colors (ARGB long/int representations)
     const val COLOR_SKY_BLUE = 0xFF4FC3F7
     const val COLOR_SUNNY_YELLOW = 0xFFFFD93D

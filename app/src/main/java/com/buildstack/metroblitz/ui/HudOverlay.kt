@@ -1,6 +1,7 @@
 package com.buildstack.metroblitz.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -73,9 +74,12 @@ fun HudOverlay(
                 color = Color.White.copy(alpha = 0.8f)
             )
             Text(
-                text = "DIST: ${distanceMetres.toInt()}m | SEGS: $activeSegments",
+                text = "DIST: ${distanceMetres.toInt()}m | BOXES: ${if (GameConfig.DEBUG_SHOW_HITBOXES) "ON" else "OFF"}",
                 fontSize = 13.sp,
-                color = Color.White.copy(alpha = 0.8f)
+                color = Color.White.copy(alpha = 0.8f),
+                modifier = Modifier.clickable {
+                    GameConfig.DEBUG_SHOW_HITBOXES = !GameConfig.DEBUG_SHOW_HITBOXES
+                }
             )
         }
     }

@@ -50,8 +50,9 @@ fun GameScene(
         )
     }
     val modelPool = remember { ModelPool(modelLoader) }
+    val obstaclePool = remember { ObstaclePool(engine, modelLoader) }
     val allSceneNodes: List<Node> = remember {
-        listOf(playerNode.modelNode, blobShadowNode) + modelPool.allNodes
+        listOf(playerNode.modelNode, blobShadowNode) + modelPool.allNodes + obstaclePool.allNodes
     }
 
     var lastClip by remember { mutableStateOf("") }
@@ -80,6 +81,9 @@ fun GameScene(
 
                     // Synchronize track segments and scenery props
                     modelPool.sync(world.trackSystem)
+
+                    // Synchronize obstacles and debug hitboxes
+                    obstaclePool.sync(snapshot.activeObstacles, showHitboxes = GameConfig.DEBUG_SHOW_HITBOXES)
 
                     // Synchronize character position
                     playerNode.modelNode.position = Position(x = snapshot.playerX, y = snapshot.playerY, z = snapshot.playerZ)
