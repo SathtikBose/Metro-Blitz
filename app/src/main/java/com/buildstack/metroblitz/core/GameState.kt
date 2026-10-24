@@ -31,5 +31,6 @@ data class GameSnapshot(
     val isChangingLane: Boolean = false,
     val laneChangeDirection: Int = 0,
     val countdownRemaining: Float = 0.0f,
-    val activeObstacles: List<Obstacle> = emptyList()
+    val activeObstacles: List<Obstacle> = emptyList(),
+    val hitTimer: Float = 0.0f
 )

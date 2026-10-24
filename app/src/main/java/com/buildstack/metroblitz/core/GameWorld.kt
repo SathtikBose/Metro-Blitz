@@ -27,6 +27,9 @@ class GameWorld(
     var coinsCollected: Int = 0
     var timeElapsedSeconds: Float = 0.0f
     var countdownRemaining: Float = 0.0f
+    var hitTimer: Float = 0.0f
+    var isInvincible: Boolean = false
+    var lastHitObstacle: Obstacle? = null
 
     fun update(rawDt: Float) {
         val dt = rawDt.coerceIn(0.0f, GameConfig.MAX_DELTA_TIME)
@@ -39,6 +42,29 @@ class GameWorld(
                 player.update(dt)
                 trackSystem.update(speed, dt)
                 spawnDirector.update(speed, dt, distanceMetres)
+
+                val hit = CollisionSystem.checkCollision(
+                    player = player,
+                    obstacles = spawnDirector.activeObstacles,
+                    isInvincible = isInvincible || GameConfig.DEBUG_INVINCIBLE
+                )
+                if (hit != null) {
+                    lastHitObstacle = hit
+                    hitTimer = 0.0f
+                    stateMachine.transitionTo(GameState.HIT)
+                }
+            }
+            GameState.HIT -> {
+                // Decelerate to stop over 0.3s
+                val decelRate = GameConfig.START_SPEED / 0.3f
+                speed = (speed - decelRate * dt).coerceAtLeast(0.0f)
+                trackSystem.update(speed, dt)
+                player.update(dt)
+
+                hitTimer += dt
+                if (hitTimer >= GameConfig.HIT_DURATION_SECONDS) {
+                    stateMachine.transitionTo(GameState.GAME_OVER)
+                }
             }
             GameState.RESUME_COUNTDOWN -> {
                 countdownRemaining -= dt
@@ -47,7 +73,7 @@ class GameWorld(
                     stateMachine.transitionTo(GameState.PLAYING)
                 }
             }
-            GameState.MENU, GameState.PAUSED, GameState.HIT, GameState.GAME_OVER, GameState.LOADING -> {
+            GameState.MENU, GameState.PAUSED, GameState.GAME_OVER, GameState.LOADING -> {
                 // World frozen
             }
         }
@@ -106,6 +132,8 @@ class GameWorld(
         coinsCollected = 0
         timeElapsedSeconds = 0.0f
         countdownRemaining = 0.0f
+        hitTimer = 0.0f
+        lastHitObstacle = null
         player.reset()
         trackSystem.reset(seed)
         spawnDirector.reset(seed)
@@ -119,6 +147,8 @@ class GameWorld(
         coinsCollected = 0
         timeElapsedSeconds = 0.0f
         countdownRemaining = 0.0f
+        hitTimer = 0.0f
+        lastHitObstacle = null
         player.reset()
         trackSystem.reset(seed)
         spawnDirector.reset(seed)
@@ -140,7 +170,8 @@ class GameWorld(
             isChangingLane = player.isChangingLane,
             laneChangeDirection = player.laneChangeDirection,
             countdownRemaining = countdownRemaining,
-            activeObstacles = spawnDirector.activeObstacles
+            activeObstacles = spawnDirector.activeObstacles,
+            hitTimer = hitTimer
         )
     }
 }
