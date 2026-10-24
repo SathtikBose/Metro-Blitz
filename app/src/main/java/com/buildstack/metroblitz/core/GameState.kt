@@ -27,5 +27,8 @@ data class GameSnapshot(
     val playerX: Float,
     val playerY: Float,
     val playerZ: Float,
+    val playerAction: PlayerAction = PlayerAction.RUNNING,
+    val isChangingLane: Boolean = false,
+    val laneChangeDirection: Int = 0,
     val countdownRemaining: Float = 0.0f
 )

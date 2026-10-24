@@ -44,9 +44,10 @@ class GameViewModel : ViewModel() {
                     _uiState.value = _uiState.value.copy(gameState = GameState.PLAYING)
                 }
             }
-            else -> {
-                // Directional commands handled by PlayerController in Phase 4
-            }
+            Command.LEFT -> world.onLeft()
+            Command.RIGHT -> world.onRight()
+            Command.JUMP -> world.onJump()
+            Command.SLIDE -> world.onSlide()
         }
     }
 

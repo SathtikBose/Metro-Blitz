@@ -11,6 +11,8 @@ class GameWorld(
     val state: GameState
         get() = stateMachine.currentState
 
+    val player = PlayerController()
+
     val trackSystem = TrackSystem(
         poolSize = GameConfig.SEGMENT_POOL_SIZE,
         segmentLength = GameConfig.SEGMENT_LENGTH_METRES,
@@ -22,20 +24,50 @@ class GameWorld(
     var score: Int = 0
     var coinsCollected: Int = 0
     var timeElapsedSeconds: Float = 0.0f
+    var countdownRemaining: Float = 0.0f
 
     fun update(rawDt: Float) {
         val dt = rawDt.coerceIn(0.0f, GameConfig.MAX_DELTA_TIME)
-        if (state == GameState.PLAYING) {
-            timeElapsedSeconds += dt
-            speed = Difficulty.calculateSpeed(timeElapsedSeconds)
-            distanceMetres += speed * dt
-            score = ScoreSystem.calculateScore(distanceMetres, coinsCollected)
-            trackSystem.update(speed, dt)
+        when (state) {
+            GameState.PLAYING -> {
+                timeElapsedSeconds += dt
+                speed = Difficulty.calculateSpeed(timeElapsedSeconds)
+                distanceMetres += speed * dt
+                score = ScoreSystem.calculateScore(distanceMetres, coinsCollected)
+                player.update(dt)
+                trackSystem.update(speed, dt)
+            }
+            GameState.RESUME_COUNTDOWN -> {
+                countdownRemaining -= dt
+                if (countdownRemaining <= 0.0f) {
+                    countdownRemaining = 0.0f
+                    stateMachine.transitionTo(GameState.PLAYING)
+                }
+            }
+            GameState.MENU, GameState.PAUSED, GameState.HIT, GameState.GAME_OVER, GameState.LOADING -> {
+                // World frozen
+            }
         }
     }
 
     fun idle(rawDt: Float) {
-        // In MENU, PAUSED, COUNTDOWN: world does not advance
+        // World frozen
+    }
+
+    fun onLeft() {
+        if (state == GameState.PLAYING) player.onLeft()
+    }
+
+    fun onRight() {
+        if (state == GameState.PLAYING) player.onRight()
+    }
+
+    fun onJump() {
+        if (state == GameState.PLAYING) player.onJump()
+    }
+
+    fun onSlide() {
+        if (state == GameState.PLAYING) player.onSlide()
     }
 
     fun startPlaying() {
@@ -47,7 +79,9 @@ class GameWorld(
     }
 
     fun resumeCountdown() {
-        stateMachine.transitionTo(GameState.RESUME_COUNTDOWN)
+        if (stateMachine.transitionTo(GameState.RESUME_COUNTDOWN)) {
+            countdownRemaining = GameConfig.RESUME_COUNTDOWN_SECONDS
+        }
     }
 
     fun resumePlaying() {
@@ -68,6 +102,8 @@ class GameWorld(
         score = 0
         coinsCollected = 0
         timeElapsedSeconds = 0.0f
+        countdownRemaining = 0.0f
+        player.reset()
         trackSystem.reset(seed)
         stateMachine.reset(GameState.PLAYING)
     }
@@ -78,6 +114,8 @@ class GameWorld(
         score = 0
         coinsCollected = 0
         timeElapsedSeconds = 0.0f
+        countdownRemaining = 0.0f
+        player.reset()
         trackSystem.reset(seed)
         stateMachine.reset(GameState.MENU)
     }
@@ -89,10 +127,14 @@ class GameWorld(
             distanceMetres = distanceMetres,
             score = score,
             coins = coinsCollected,
-            playerLane = 1,
-            playerX = 0.0f,
-            playerY = 0.0f,
-            playerZ = 0.0f
+            playerLane = player.currentLane,
+            playerX = player.x,
+            playerY = player.y,
+            playerZ = player.z,
+            playerAction = player.actionState,
+            isChangingLane = player.isChangingLane,
+            laneChangeDirection = player.laneChangeDirection,
+            countdownRemaining = countdownRemaining
         )
     }
 }
