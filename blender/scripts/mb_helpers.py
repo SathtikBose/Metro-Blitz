@@ -52,8 +52,19 @@ def add_cylinder(name: str, radius: float, depth: float, loc: tuple, mat: bpy.ty
         o.data.materials.append(mat)
     return o
 
-def add_sphere(name: str, radius: float, loc: tuple, mat: bpy.types.Material, scale: tuple = (1, 1, 1)) -> bpy.types.Object:
-    bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=8, radius=radius, location=loc)
+def add_sphere(name: str, radius: float, loc: tuple, mat: bpy.types.Material, scale: tuple = (1, 1, 1), segments: int = 12, ring_count: int = 8) -> bpy.types.Object:
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=segments, ring_count=ring_count, radius=radius, location=loc)
+    o = bpy.context.active_object
+    o.name = name
+    o.scale = scale
+    bpy.ops.object.transform_apply(scale=True)
+    if mat:
+        o.data.materials.append(mat)
+    bpy.ops.object.shade_smooth()
+    return o
+
+def add_icosphere(name: str, radius: float, loc: tuple, mat: bpy.types.Material, subdivisions: int = 1, scale: tuple = (1, 1, 1)) -> bpy.types.Object:
+    bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=subdivisions, radius=radius, location=loc)
     o = bpy.context.active_object
     o.name = name
     o.scale = scale
