@@ -1,0 +1,64 @@
+
+--- Validating: track_segment.glb (55.06 KB) ---
+  Meshes: 1
+  Triangles: 1212
+  Materials: 4
+  Textures: 0
+  Animations (0): []
+  RESULT: PASSED
+
+--- Validating: building_a.glb (12.34 KB) ---
+  Meshes: 1
+  Triangles: 204
+  Materials: 4
+  Textures: 0
+  Animations (0): []
+  RESULT: PASSED
+
+--- Validating: building_b.glb (10.18 KB) ---
+  Meshes: 1
+  Triangles: 148
+  Materials: 4
+  Textures: 0
+  Animations (0): []
+  RESULT: PASSED
+
+--- Validating: building_c.glb (10.88 KB) ---
+  Meshes: 1
+  Triangles: 156
+  Materials: 4
+  Textures: 0
+  Animations (0): []
+  RESULT: PASSED
+
+--- Validating: building_d.glb (8.04 KB) ---
+  Meshes: 1
+  Triangles: 108
+  Materials: 4
+  Textures: 0
+  Animations (0): []
+  RESULT: PASSED
+
+--- Validating: lamp_post.glb (7.61 KB) ---
+  Meshes: 1
+  Triangles: 108
+  Materials: 2
+  Textures: 0
+  Animations (0): []
+  RESULT: PASSED
+
+--- Validating: tree.glb (7.33 KB) ---
+  Meshes: 1
+  Triangles: 148
+  Materials: 2
+  Textures: 0
+  Animations (0): []
+  RESULT: PASSED
+
+--- Validating: fence.glb (4.54 KB) ---
+  Meshes: 1
+  Triangles: 60
+  Materials: 2
+  Textures: 0
+  Animations (0): []
+  RESULT: PASSED
