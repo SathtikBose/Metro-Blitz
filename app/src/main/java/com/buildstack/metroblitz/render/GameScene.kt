@@ -58,6 +58,7 @@ fun GameScene(
     }
 
     var lastClip by remember { mutableStateOf("") }
+    var lastAnimSpeed by remember { mutableStateOf(1.0f) }
     var lastNanos by remember { mutableStateOf(0L) }
 
     Box(
@@ -106,9 +107,10 @@ fun GameScene(
                     val isLoop = (targetClip == AssetCatalog.CLIP_RUN || targetClip == AssetCatalog.CLIP_IDLE)
                     val animSpeed = if (targetClip == AssetCatalog.CLIP_RUN) (snapshot.speed / GameConfig.START_SPEED) else 1.0f
 
-                    if (targetClip != lastClip || targetClip == AssetCatalog.CLIP_RUN) {
+                    if (targetClip != lastClip || (targetClip == AssetCatalog.CLIP_RUN && kotlin.math.abs(animSpeed - lastAnimSpeed) > 0.05f)) {
                         playerNode.play(targetClip, loop = isLoop, speed = animSpeed)
                         lastClip = targetClip
+                        lastAnimSpeed = animSpeed
                     }
 
                     // Additive lean tilt during lane change
