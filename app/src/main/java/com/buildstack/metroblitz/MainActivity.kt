@@ -29,6 +29,7 @@ import com.buildstack.metroblitz.core.GameConfig
 import com.buildstack.metroblitz.core.GameState
 import com.buildstack.metroblitz.render.GameScene
 import com.buildstack.metroblitz.theme.MetroBlitzTheme
+import com.buildstack.metroblitz.input.Command
 import com.buildstack.metroblitz.ui.CountdownOverlay
 import com.buildstack.metroblitz.ui.GameOverDialog
 import com.buildstack.metroblitz.ui.GameViewModel
@@ -83,16 +84,16 @@ fun GameScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         GameScene(
-            onFrame = { dt, fps ->
-                viewModel.onFrame(dt, fps)
-            }
+            viewModel = viewModel,
+            modifier = Modifier.fillMaxSize()
         )
 
         when (uiState.gameState) {
             GameState.LOADING, GameState.MENU -> {
                 MenuOverlay(
                     bestScore = uiState.bestScore,
-                    totalCoins = uiState.totalCoins
+                    totalCoins = uiState.totalCoins,
+                    onTap = { viewModel.onCommand(Command.TAP) }
                 )
             }
             GameState.PLAYING -> {
@@ -100,6 +101,9 @@ fun GameScreen(
                     score = uiState.score,
                     coins = uiState.coins,
                     fps = uiState.fps,
+                    speed = uiState.speed,
+                    distanceMetres = uiState.distanceMetres,
+                    activeSegments = uiState.activeSegments,
                     onPauseClick = { viewModel.onPauseGame() }
                 )
             }

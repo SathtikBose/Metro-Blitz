@@ -20,6 +20,8 @@ data class UiState(
     val coins: Int = 0,
     val totalCoins: Int = 0,
     val speed: Float = GameConfig.START_SPEED,
+    val distanceMetres: Float = 0.0f,
+    val activeSegments: Int = GameConfig.SEGMENT_POOL_SIZE,
     val countdownSeconds: Int = 3,
     val fps: Int = 60,
     val isInvincible: Boolean = false
@@ -80,11 +82,17 @@ class GameViewModel : ViewModel() {
     fun onFrame(rawDt: Float, currentFps: Int = 60) {
         world.update(rawDt)
         val snapshot = world.snapshot()
-        if (snapshot.score != _uiState.value.score || snapshot.state != _uiState.value.gameState) {
+        if (snapshot.score != _uiState.value.score ||
+            snapshot.state != _uiState.value.gameState ||
+            currentFps != _uiState.value.fps ||
+            snapshot.distanceMetres.toInt() != _uiState.value.distanceMetres.toInt()
+        ) {
             _uiState.value = _uiState.value.copy(
                 score = snapshot.score,
                 coins = snapshot.coins,
                 speed = snapshot.speed,
+                distanceMetres = snapshot.distanceMetres,
+                activeSegments = world.trackSystem.segments.size,
                 gameState = snapshot.state,
                 fps = currentFps
             )

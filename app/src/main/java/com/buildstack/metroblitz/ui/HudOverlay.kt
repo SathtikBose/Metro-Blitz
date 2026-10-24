@@ -25,6 +25,9 @@ fun HudOverlay(
     score: Int,
     coins: Int,
     fps: Int,
+    speed: Float = GameConfig.START_SPEED,
+    distanceMetres: Float = 0.0f,
+    activeSegments: Int = GameConfig.SEGMENT_POOL_SIZE,
     onPauseClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -59,11 +62,21 @@ fun HudOverlay(
             )
         }
 
-        Text(
-            text = "FPS: $fps",
-            fontSize = 14.sp,
-            color = Color.White.copy(alpha = 0.7f),
-            modifier = Modifier.align(Alignment.BottomStart).padding(bottom = 8.dp)
-        )
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(bottom = 8.dp)
+        ) {
+            Text(
+                text = "FPS: $fps | SPD: ${"%.1f".format(speed)} m/s",
+                fontSize = 13.sp,
+                color = Color.White.copy(alpha = 0.8f)
+            )
+            Text(
+                text = "DIST: ${distanceMetres.toInt()}m | SEGS: $activeSegments",
+                fontSize = 13.sp,
+                color = Color.White.copy(alpha = 0.8f)
+            )
+        }
     }
 }
