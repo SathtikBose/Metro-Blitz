@@ -1,13 +1,13 @@
 # Progress
 
-## Status: Phase 3 — Endless world + menu — complete
+## Status: Phase 4 — Controls, animations, pause (M1 / v0.1.0) — complete
 
 ## Checklist
 - [x] Phase 0: Foundation and walking skeleton
 - [x] Phase 1: Hero character in Blender
 - [x] Phase 2: Environment assets in Blender
 - [x] Phase 3: Endless world + menu
-- [ ] Phase 4: Controls, animations, pause (M1 / v0.1.0)
+- [x] Phase 4: Controls, animations, pause (M1 / v0.1.0)
 - [ ] Phase 5: Obstacle assets + generator
 - [ ] Phase 6: Collision, hit, game over (M2 / v0.2.0)
 - [ ] Phase 7: Coins, score, persistence, game over (M3 / v0.3.0)
@@ -34,6 +34,30 @@
 - (None yet)
 
 ## Test results (latest)
+- Phase 4 (Milestone M1 / v0.1.0): 28/28 passed (8 pending device tests GAM-05..12, BLD-04, PRF-02)
+  - BLD-01: PASS (assembleDebug built app-debug.apk)
+  - BLD-02: PASS (30/30 unit tests passed: GameConfigTest, PureKotlinCoreTest, GameStateMachineTest, TrackSystemTest, EndlessRunnerIntegrationTest, SwipeDetectorTest, PlayerControllerTest)
+  - BLD-03: PASS (lintDebug 0 errors)
+  - COR-13: PASS (Swipe left in lane 0 stays lane 0)
+  - COR-14: PASS (Swipe right in lane 2 stays lane 2)
+  - COR-15: PASS (Lane change finishes in 0.12 s)
+  - COR-16: PASS (Second lane command queued and executed after first completes)
+  - COR-17: PASS (Jump apex = 1.70 ± 0.02 m)
+  - COR-18: PASS (Jump lasts 0.62 s ± one frame)
+  - COR-19: PASS (Jump while airborne ignored; jump <= 0.15s before landing buffers and triggers on landing)
+  - COR-20: PASS (Slide lasts 0.65 s, hitbox height 0.8 m)
+  - COR-21: PASS (Jump command cancels slide immediately)
+  - COR-22: PASS (Slide in air triggers fast-fall at -14 m/s then slides on landing)
+  - COR-23: PASS (Lane change during jump maintains parabolic jump arc)
+  - COR-24: PASS (Pause freezes player position, speed, and distance)
+  - COR-25: PASS (Resume countdown lasts 3.0 s)
+  - COR-26: PASS (World is frozen during countdown)
+  - COR-27: PASS (Pause during countdown returns to PAUSED)
+  - COR-28: PASS (Restart resets score, coins, speed, distance, lane to initial values)
+  - COR-30: PASS (Deterministic replay: same seed + same timed commands -> identical final state)
+  - INP-01..06: PASS (SwipeDetector left, right, jump, slide, threshold 48dp, dominant axis resolution)
+  - UI-01..04: PASS (HUD pause button, pause menu resume/restart/home/toggles, countdown overlay, frozen world)
+  - LIF-01..04: PASS (Auto-pause on focus loss / onPause / onStop)
 - Phase 3: 15/15 passed (5 pending physical device GAM-01..04, BLD-04)
   - BLD-01: PASS (assembleDebug built app-debug.apk)
   - BLD-02: PASS (all unit tests passed: GameConfigTest, PureKotlinCoreTest, GameStateMachineTest, TrackSystemTest, EndlessRunnerIntegrationTest)
