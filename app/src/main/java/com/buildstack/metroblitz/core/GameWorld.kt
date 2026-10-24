@@ -19,6 +19,8 @@ class GameWorld(
         rng = Rng(seed)
     )
 
+    val spawnDirector = SpawnDirector(seed)
+
     var speed: Float = GameConfig.START_SPEED
     var distanceMetres: Float = 0.0f
     var score: Int = 0
@@ -36,6 +38,7 @@ class GameWorld(
                 score = ScoreSystem.calculateScore(distanceMetres, coinsCollected)
                 player.update(dt)
                 trackSystem.update(speed, dt)
+                spawnDirector.update(speed, dt, distanceMetres)
             }
             GameState.RESUME_COUNTDOWN -> {
                 countdownRemaining -= dt
@@ -105,6 +108,7 @@ class GameWorld(
         countdownRemaining = 0.0f
         player.reset()
         trackSystem.reset(seed)
+        spawnDirector.reset(seed)
         stateMachine.reset(GameState.PLAYING)
     }
 
@@ -117,6 +121,7 @@ class GameWorld(
         countdownRemaining = 0.0f
         player.reset()
         trackSystem.reset(seed)
+        spawnDirector.reset(seed)
         stateMachine.reset(GameState.MENU)
     }
 
@@ -134,7 +139,8 @@ class GameWorld(
             playerAction = player.actionState,
             isChangingLane = player.isChangingLane,
             laneChangeDirection = player.laneChangeDirection,
-            countdownRemaining = countdownRemaining
+            countdownRemaining = countdownRemaining,
+            activeObstacles = spawnDirector.activeObstacles
         )
     }
 }
