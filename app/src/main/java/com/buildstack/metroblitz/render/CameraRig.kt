@@ -17,6 +17,8 @@ class CameraRig {
     var lookY: Float = 0.85f
     var lookZ: Float = 0.0f
 
+    private var shakeTimer: Float = 0.0f
+
     fun update(cameraNode: CameraNode, state: GameState, playerX: Float, dt: Float) {
         val targetX = playerX * 0.35f
         posX += (targetX - posX) * (GameConfig.CAMERA_LERP_FACTOR * dt).coerceIn(0.0f, 1.0f)
@@ -29,6 +31,7 @@ class CameraRig {
             posZ += (3.6f - posZ) * lerp
             lookY += (0.85f - lookY) * lerp
             lookZ += (0.0f - lookZ) * lerp
+            shakeTimer = 0.0f
         } else {
             // Gameplay pull-back follow
             val lerp = (4.0f * dt).coerceIn(0.0f, 1.0f)
@@ -38,8 +41,22 @@ class CameraRig {
             lookZ += (GameConfig.CAMERA_LOOK_Z - lookZ) * lerp
         }
 
-        cameraNode.position = Position(x = posX, y = posY, z = posZ)
-        cameraNode.lookAt(Position(x = lookX, y = lookY, z = lookZ))
+        // Camera shake on HIT (0.15 s duration)
+        var shakeOffsetX = 0.0f
+        var shakeOffsetY = 0.0f
+        if (state == GameState.HIT) {
+            if (shakeTimer < 0.15f) {
+                val decay = (1.0f - shakeTimer / 0.15f).coerceIn(0.0f, 1.0f)
+                shakeOffsetX = (kotlin.math.sin(shakeTimer * 60.0f) * 0.18f) * decay
+                shakeOffsetY = (kotlin.math.cos(shakeTimer * 50.0f) * 0.12f) * decay
+                shakeTimer += dt
+            }
+        } else {
+            shakeTimer = 0.0f
+        }
+
+        cameraNode.position = Position(x = posX + shakeOffsetX, y = posY + shakeOffsetY, z = posZ)
+        cameraNode.lookAt(Position(x = lookX + shakeOffsetX, y = lookY, z = lookZ))
     }
 
     fun resetToMenu(cameraNode: CameraNode) {
@@ -49,6 +66,7 @@ class CameraRig {
         lookX = 0.0f
         lookY = 0.85f
         lookZ = 0.0f
+        shakeTimer = 0.0f
         cameraNode.position = Position(x = posX, y = posY, z = posZ)
         cameraNode.lookAt(Position(x = lookX, y = lookY, z = lookZ))
     }
