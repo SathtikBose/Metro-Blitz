@@ -160,6 +160,7 @@ fun GameScreen(
                     score = uiState.score,
                     bestScore = uiState.bestScore,
                     coins = uiState.coins,
+                    isNewBest = uiState.isNewBest,
                     onPlayAgain = { viewModel.onRestartGame() },
                     onHome = { viewModel.onHome() }
                 )

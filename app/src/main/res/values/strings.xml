@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">Metro Blitz</string>
+    <string name="title_metro_blitz">METRO BLITZ</string>
+    <string name="tap_to_play">TAP TO PLAY</string>
+    <string name="paused">PAUSED</string>
+    <string name="resume">Resume</string>
+    <string name="restart">Restart</string>
+    <string name="home">Home</string>
+    <string name="get_ready">GET READY</string>
+    <string name="oops">OOPS!</string>
+    <string name="score">Score</string>
+    <string name="best">Best</string>
+    <string name="coins">Coins</string>
+    <string name="new_best">NEW BEST!</string>
+    <string name="play_again">PLAY AGAIN</string>
+    <string name="error_assets_load">Could not load game assets</string>
+    <string name="retry">Retry</string>
 </resources>

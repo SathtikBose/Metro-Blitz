@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -32,14 +33,15 @@ import androidx.compose.ui.unit.sp
 import com.buildstack.metroblitz.core.GameConfig
 
 /**
- * Game over popup showing run score, best score, and Play Again / Home buttons.
- * Slides up smoothly (0.25s) when presented (UI-05, UI-06).
+ * Game over popup showing run score, best score (with NEW BEST! indicator), and Play Again / Home buttons.
+ * Slides up smoothly (0.25s) when presented (UI-05, UI-06, UI-08, UI-09).
  */
 @Composable
 fun GameOverDialog(
     score: Int,
     bestScore: Int,
     coins: Int,
+    isNewBest: Boolean = false,
     onPlayAgain: () -> Unit,
     onHome: () -> Unit,
     modifier: Modifier = Modifier
@@ -77,14 +79,23 @@ fun GameOverDialog(
                     color = Color(GameConfig.COLOR_CORAL_RED)
                 )
 
-                if (bestScore > 0 && score > bestScore) {
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "NEW BEST!",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Black,
-                        color = Color(GameConfig.COLOR_MINT_GREEN)
-                    )
+                if (isNewBest || (score >= bestScore && score > 0)) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Box(
+                        modifier = Modifier
+                            .background(
+                                color = Color(GameConfig.COLOR_MINT_GREEN),
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(horizontal = 12.dp, vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = "NEW BEST!",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Black,
+                            color = Color(GameConfig.COLOR_DEEP_NAVY)
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -105,12 +116,20 @@ fun GameOverDialog(
                     color = Color(GameConfig.COLOR_SLATE)
                 )
 
-                Text(
-                    text = "Coins: $coins",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(GameConfig.COLOR_SUNNY_YELLOW)
-                )
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "🪙 ",
+                        fontSize = 16.sp
+                    )
+                    Text(
+                        text = "Coins: $coins",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(GameConfig.COLOR_ORANGE)
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
