@@ -75,8 +75,16 @@ fun ModelViewerScreen(
                 cameraNode.lookAt(Position(x = 0.0f, y = 1.0f, z = -15.0f))
             }
             ViewerTab.PROPS -> {
-                cameraNode.position = Position(x = 0.0f, y = 3.5f, z = 9.0f)
-                cameraNode.lookAt(Position(x = 0.0f, y = 2.0f, z = 0.0f))
+                if (selectedProp.contains("train")) {
+                    cameraNode.position = Position(x = 0.0f, y = 4.5f, z = 14.0f)
+                    cameraNode.lookAt(Position(x = 0.0f, y = 1.5f, z = 0.0f))
+                } else if (selectedProp.contains("barricade") || selectedProp.contains("beam")) {
+                    cameraNode.position = Position(x = 0.0f, y = 1.4f, z = 4.5f)
+                    cameraNode.lookAt(Position(x = 0.0f, y = 0.8f, z = 0.0f))
+                } else {
+                    cameraNode.position = Position(x = 0.0f, y = 3.5f, z = 9.0f)
+                    cameraNode.lookAt(Position(x = 0.0f, y = 2.0f, z = 0.0f))
+                }
             }
         }
     }
@@ -161,6 +169,18 @@ fun ModelViewerScreen(
         propNode = ModelNode(modelInstance = inst).apply {
             position = Position(x = 0.0f, y = 0.0f, z = 0.0f)
         }
+        if (currentTab == ViewerTab.PROPS) {
+            if (selectedProp.contains("train")) {
+                cameraNode.position = Position(x = 0.0f, y = 4.5f, z = 14.0f)
+                cameraNode.lookAt(Position(x = 0.0f, y = 1.5f, z = 0.0f))
+            } else if (selectedProp.contains("barricade") || selectedProp.contains("beam")) {
+                cameraNode.position = Position(x = 0.0f, y = 1.4f, z = 4.5f)
+                cameraNode.lookAt(Position(x = 0.0f, y = 0.8f, z = 0.0f))
+            } else {
+                cameraNode.position = Position(x = 0.0f, y = 3.5f, z = 9.0f)
+                cameraNode.lookAt(Position(x = 0.0f, y = 2.0f, z = 0.0f))
+            }
+        }
     }
 
     val activeNodes = when (currentTab) {
@@ -180,6 +200,10 @@ fun ModelViewerScreen(
     )
 
     val propsList = listOf(
+        "Barricade" to AssetCatalog.MODEL_BARRICADE_LOW,
+        "Beam" to AssetCatalog.MODEL_OVERHEAD_BEAM,
+        "Train Blue" to AssetCatalog.MODEL_TRAIN_BLUE,
+        "Train Orange" to AssetCatalog.MODEL_TRAIN_ORANGE,
         "Track" to AssetCatalog.MODEL_TRACK_SEGMENT,
         "Build A" to AssetCatalog.MODEL_BUILDING_A,
         "Build B" to AssetCatalog.MODEL_BUILDING_B,

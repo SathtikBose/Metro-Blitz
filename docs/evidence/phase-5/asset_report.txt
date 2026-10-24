@@ -1,0 +1,33 @@
+=== PHASE 5 OBSTACLE ASSET VALIDATION REPORT ===
+
+--- Validating: barricade_low.glb (14.49 KB) ---
+  Meshes: 1
+  Triangles: 264
+  Materials: 4
+  Textures: 0
+  Animations (0): []
+  RESULT: PASSED
+
+--- Validating: overhead_beam.glb (12.24 KB) ---
+  Meshes: 1
+  Triangles: 204
+  Materials: 4
+  Textures: 0
+  Animations (0): []
+  RESULT: PASSED
+
+--- Validating: train_blue.glb (30.73 KB) ---
+  Meshes: 1
+  Triangles: 636
+  Materials: 4
+  Textures: 0
+  Animations (0): []
+  RESULT: PASSED
+
+--- Validating: train_orange.glb (30.71 KB) ---
+  Meshes: 1
+  Triangles: 636
+  Materials: 4
+  Textures: 0
+  Animations (0): []
+  RESULT: PASSED
