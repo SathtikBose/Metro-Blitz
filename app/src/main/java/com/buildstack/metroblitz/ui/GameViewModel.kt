@@ -60,8 +60,11 @@ class GameViewModel : ViewModel() {
 
     fun onResumeGame() {
         if (_uiState.value.gameState == GameState.PAUSED) {
-            world.resumePlaying()
-            _uiState.value = _uiState.value.copy(gameState = GameState.PLAYING)
+            world.resumeCountdown()
+            _uiState.value = _uiState.value.copy(
+                gameState = GameState.RESUME_COUNTDOWN,
+                countdownSeconds = 3
+            )
         }
     }
 
@@ -83,9 +86,16 @@ class GameViewModel : ViewModel() {
     fun onFrame(rawDt: Float, currentFps: Int = 60) {
         world.update(rawDt)
         val snapshot = world.snapshot()
+        val countdownSecs = if (snapshot.state == GameState.RESUME_COUNTDOWN) {
+            kotlin.math.ceil(snapshot.countdownRemaining).toInt().coerceIn(1, 3)
+        } else {
+            3
+        }
+
         if (snapshot.score != _uiState.value.score ||
             snapshot.state != _uiState.value.gameState ||
             currentFps != _uiState.value.fps ||
+            countdownSecs != _uiState.value.countdownSeconds ||
             snapshot.distanceMetres.toInt() != _uiState.value.distanceMetres.toInt()
         ) {
             _uiState.value = _uiState.value.copy(
@@ -95,6 +105,7 @@ class GameViewModel : ViewModel() {
                 distanceMetres = snapshot.distanceMetres,
                 activeSegments = world.trackSystem.segments.size,
                 gameState = snapshot.state,
+                countdownSeconds = countdownSecs,
                 fps = currentFps
             )
         }
