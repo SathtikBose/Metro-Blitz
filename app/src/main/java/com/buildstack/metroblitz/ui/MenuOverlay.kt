@@ -6,22 +6,32 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.buildstack.metroblitz.R
 import com.buildstack.metroblitz.core.GameConfig
 
 /**
@@ -54,13 +64,38 @@ fun MenuOverlay(
             ) { onTap() }
             .padding(24.dp)
     ) {
-        Text(
-            text = "METRO BLITZ",
-            fontSize = 40.sp,
-            fontWeight = FontWeight.Black,
-            color = Color.White,
-            modifier = Modifier.align(Alignment.TopCenter).padding(top = 48.dp)
-        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 48.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.game_icon),
+                contentDescription = "Metro Blitz Game Icon",
+                modifier = Modifier
+                    .size(112.dp)
+                    .clip(CircleShape)
+                    .border(3.dp, Color(GameConfig.COLOR_SUNNY_YELLOW), CircleShape)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "METRO BLITZ",
+                fontSize = 40.sp,
+                fontWeight = FontWeight.Black,
+                color = Color.White
+            )
+
+            Text(
+                text = "ENDLESS RUNNER",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(GameConfig.COLOR_SUNNY_YELLOW),
+                letterSpacing = 2.sp
+            )
+        }
 
         Text(
             text = "TAP TO PLAY",
