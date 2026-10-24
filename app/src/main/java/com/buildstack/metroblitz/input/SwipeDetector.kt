@@ -31,18 +31,15 @@ class SwipeDetector(
 
                 val dx = event.x - downX
                 val dy = event.y - downY
-                val absDx = abs(dx)
-                val absDy = abs(dy)
                 val elapsed = System.currentTimeMillis() - downTime
 
-                if (elapsed <= maxDurationMs && (absDx >= thresholdPx || absDy >= thresholdPx)) {
-                    triggered = true
-                    if (absDx > absDy) {
-                        if (dx > 0) onCommand(Command.RIGHT) else onCommand(Command.LEFT)
-                    } else {
-                        if (dy > 0) onCommand(Command.SLIDE) else onCommand(Command.JUMP) // Swipe down = slide, up = jump
+                if (elapsed <= maxDurationMs) {
+                    val cmd = resolveSwipe(dx, dy, thresholdPx)
+                    if (cmd != null) {
+                        triggered = true
+                        onCommand(cmd)
+                        return true
                     }
-                    return true
                 }
             }
 
@@ -63,5 +60,22 @@ class SwipeDetector(
             }
         }
         return false
+    }
+
+    companion object {
+        /**
+         * Pure function resolving a dx, dy motion to a directional Command.
+         * Validates threshold, dominant axis, and direction.
+         */
+        fun resolveSwipe(dx: Float, dy: Float, thresholdPx: Float = 48f): Command? {
+            val absDx = abs(dx)
+            val absDy = abs(dy)
+            if (absDx < thresholdPx && absDy < thresholdPx) return null
+            return if (absDx > absDy) {
+                if (dx > 0) Command.RIGHT else Command.LEFT
+            } else {
+                if (dy > 0) Command.SLIDE else Command.JUMP
+            }
+        }
     }
 }

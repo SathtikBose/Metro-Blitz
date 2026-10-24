@@ -1,6 +1,8 @@
 package com.buildstack.metroblitz
 
 import android.os.Bundle
+import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -27,9 +29,11 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.buildstack.metroblitz.core.GameConfig
 import com.buildstack.metroblitz.core.GameState
+import com.buildstack.metroblitz.input.Command
+import com.buildstack.metroblitz.input.DebugKeyInput
+import com.buildstack.metroblitz.input.SwipeDetector
 import com.buildstack.metroblitz.render.GameScene
 import com.buildstack.metroblitz.theme.MetroBlitzTheme
-import com.buildstack.metroblitz.input.Command
 import com.buildstack.metroblitz.ui.CountdownOverlay
 import com.buildstack.metroblitz.ui.GameOverDialog
 import com.buildstack.metroblitz.ui.GameViewModel
@@ -40,9 +44,15 @@ import com.buildstack.metroblitz.ui.PauseOverlay
 
 class MainActivity : ComponentActivity() {
     private val viewModel: GameViewModel by viewModels()
+    private lateinit var swipeDetector: SwipeDetector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val density = resources.displayMetrics.density
+        swipeDetector = SwipeDetector(thresholdPx = 48f * density) { command ->
+            viewModel.onCommand(command)
+        }
 
         // Keep screen on while playing
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -67,6 +77,22 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        swipeDetector.onTouchEvent(ev)
+        return super.dispatchTouchEvent(ev)
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (BuildConfig.DEBUG) {
+            val cmd = DebugKeyInput.onKeyDown(keyCode)
+            if (cmd != null) {
+                viewModel.onCommand(cmd)
+                return true
+            }
+        }
+        return super.onKeyDown(keyCode, event)
     }
 
     override fun onPause() {
