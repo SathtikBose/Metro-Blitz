@@ -95,8 +95,20 @@ class MainActivity : ComponentActivity() {
         return super.onKeyDown(keyCode, event)
     }
 
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (!hasFocus) {
+            viewModel.onPauseGame()
+        }
+    }
+
     override fun onPause() {
         super.onPause()
+        viewModel.onPauseGame()
+    }
+
+    override fun onStop() {
+        super.onStop()
         viewModel.onPauseGame()
     }
 }
