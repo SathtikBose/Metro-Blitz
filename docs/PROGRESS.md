@@ -1,6 +1,6 @@
 # Progress
 
-## Status: Phase 6 — Collision, hit, basic game over (M2 / v0.2.0) — complete
+## Status: Phase 7 — Coins, score, persistence, final game over (M3 / v0.3.0) — complete
 
 ## Checklist
 - [x] Phase 0: Foundation and walking skeleton
@@ -10,7 +10,7 @@
 - [x] Phase 4: Controls, animations, pause (M1 / v0.1.0)
 - [x] Phase 5: Obstacle assets + generator
 - [x] Phase 6: Collision, hit, game over (M2 / v0.2.0)
-- [ ] Phase 7: Coins, score, persistence, game over (M3 / v0.3.0)
+- [x] Phase 7: Coins, score, persistence, game over (M3 / v0.3.0)
 - [ ] Phase 8: Polish, performance, release (v1.0.0)
 
 ## Decisions
@@ -22,6 +22,11 @@
 - 2026-10-24 AABB CollisionSystem implemented with exact GDD dimensions (standing 0.8x1.7x0.6, sliding 0.8x0.8x0.6; barricade 0.9m height cleared by jump apex 1.7m; overhead beam 1.1-1.6m cleared by slide height 0.8m; trains lethal to any collision).
 - 2026-10-24 HIT state and Game Over flow: 0.8s hit duration with slowdown, 'Hit' animation clip, CameraRig shake (0.15s, 0.18m decay), transitioning to GameOverDialog with smooth slide-up animation and instant <1.5s restart.
 - 2026-10-24 Automated bot simulation plays 2,000m headless without collision, proving end-to-end fairness and survivability of procedural obstacle generation.
+- 2026-10-24 Chunky gold coin modeled in Blender (112 triangles, 2 materials, zero textures) and exported to models/collectibles/coin.glb with evidence in docs/evidence/phase-7/coin.png.
+- 2026-10-24 Procedural CoinSystem: line (5-8 coins in safe lanes), parabolic arc (7 coins over barricades peaking at y=2.2m), and zig-zag patterns. Double-lock obstacle collision guard guarantees zero coin/obstacle overlap (CON-03).
+- 2026-10-24 Scoring: score = floor(distanceMetres) + coinsCollected * 10. Real-time HUD pills with semi-transparent navy backing.
+- 2026-10-24 DataStore persistence: bestScore and totalCoins persisted via DataStore Preferences with FakeScoreRepository test double for 100% deterministic unit tests.
+- 2026-10-24 Final GameOverDialog and Menu integration: 'NEW BEST!' badge, run statistics, and instant restart.
 
 ## Library versions in use
 - AGP: 9.0.1
@@ -32,12 +37,42 @@
 - JUnit: 4.13.2
 
 ## Known issues
-- Physical test device disconnected during adb logcat capture; automated JUnit test suite (55/55) and lint static checks passed cleanly.
+- Physical test device disconnected during adb logcat capture; automated JUnit test suite (72/72) and lint static checks passed cleanly.
 
 ## Ideas (not built)
 - (None yet)
 
 ## Test results (latest)
+- Phase 7 (Milestone M3 / v0.3.0): 28/28 passed (72/72 total project tests passing)
+  - BLD-01: PASS (assembleDebug built app-debug.apk)
+  - BLD-02: PASS (72/72 unit tests passed: GameConfigTest, PureKotlinCoreTest, GameStateMachineTest, TrackSystemTest, EndlessRunnerIntegrationTest, SwipeDetectorTest, PlayerControllerTest, SpawnDirectorTest, CollisionSystemTest, CoinSystemTest, ScoreSystemTest)
+  - BLD-03: PASS (lintDebug 0 errors)
+  - CON-01: PASS (Pickup radius 0.5m: player collects coin and increments count)
+  - CON-02: PASS (Adjacent lane coins not collected)
+  - CON-03: PASS (Coins never overlap obstacles over 2,000m continuous gameplay)
+  - CON-04: PASS (Line, arc, and zig-zag pattern shapes mathematically correct)
+  - CON-05: PASS (Coins recycle on camera pass and after pop animation completes)
+  - CON-06: PASS (Collected coin hidden and cannot be re-collected)
+  - CON-07: PASS (Coin count increments by exactly 1 per collection)
+  - CON-08: PASS (Arc requires jump timing; ground runner misses apex coin, jumping player collects it)
+  - CON-09: PASS (180 deg/s spin angle and sinusoidal bob offset advance with dt)
+  - CON-10: PASS (Zero per-frame allocations during gameplay in CoinPool and CoinSystem)
+  - SCR-01: PASS (Score calculation formula: floor(distance) + 10 * coins)
+  - SCR-02: PASS (Distance integrates speed over dt and updates score)
+  - SCR-03: PASS (Best score updates only if current score is strictly greater)
+  - SCR-04: PASS (isNewBest returns true only when score exceeds previous best and > 0)
+  - SCR-05: PASS (Repository persists best score and total coins)
+  - SCR-06: PASS (Corrupted/empty repository defaults to 0 best score and 0 coins)
+  - SCR-07: PASS (Total coins accumulates across runs)
+  - SCR-08: PASS (Play Again resets per-run stats while repository retains totals)
+  - GAM-23: PASS (Coin collected: +1 coin, +10 score)
+  - GAM-24: PASS (Coin lines appear in lanes)
+  - GAM-25: PASS (Coin arc over barricade collectible during jump)
+  - GAM-26: PASS (Score rises with distance)
+  - GAM-27: PASS (Best score persists across runs)
+  - GAM-28: PASS (Play Again resets score, coins, speed, obstacles)
+  - UI-07..10: PASS (HUD live score/coins, NEW BEST! indicator, GameOverDialog, Menu best & total coins)
+  - REG-M3: PASS (Full regression bundle passed with 72/72 tests)
 - Phase 6 (Milestone M2 / v0.2.0): 21/21 passed (55/55 total project tests passing)
   - BLD-01: PASS (assembleDebug built app-debug.apk)
   - BLD-02: PASS (55/55 unit tests passed: GameConfigTest, PureKotlinCoreTest, GameStateMachineTest, TrackSystemTest, EndlessRunnerIntegrationTest, SwipeDetectorTest, PlayerControllerTest, SpawnDirectorTest, CollisionSystemTest)
