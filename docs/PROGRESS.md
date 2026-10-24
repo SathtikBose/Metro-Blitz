@@ -1,6 +1,6 @@
 # Progress
 
-## Status: Phase 7 — Coins, score, persistence, final game over (M3 / v0.3.0) — complete
+## Status: Phase 8 — Polish, performance, release (v1.0.0) — complete
 
 ## Checklist
 - [x] Phase 0: Foundation and walking skeleton
@@ -11,7 +11,7 @@
 - [x] Phase 5: Obstacle assets + generator
 - [x] Phase 6: Collision, hit, game over (M2 / v0.2.0)
 - [x] Phase 7: Coins, score, persistence, game over (M3 / v0.3.0)
-- [ ] Phase 8: Polish, performance, release (v1.0.0)
+- [x] Phase 8: Polish, performance, release (v1.0.0)
 
 ## Decisions
 - 2026-10-24 Scaffolding initialized using Android CLI Compose template (`com.buildstack.metroblitz`, minSdk 26, compileSdk/targetSdk 36, AGP 9.0.1, Gradle 9.1.0, Java 21).
@@ -27,6 +27,13 @@
 - 2026-10-24 Scoring: score = floor(distanceMetres) + coinsCollected * 10. Real-time HUD pills with semi-transparent navy backing.
 - 2026-10-24 DataStore persistence: bestScore and totalCoins persisted via DataStore Preferences with FakeScoreRepository test double for 100% deterministic unit tests.
 - 2026-10-24 Final GameOverDialog and Menu integration: 'NEW BEST!' badge, run statistics, and instant restart.
+- 2026-10-24 Audio integration: SoundManager implemented with SoundPool for 6 procedurally generated 16-bit 44.1kHz CC0 sound effects (jump, slide, coin, hit, tap, countdown) and MediaPlayer for looping background music track; CREDITS.md updated.
+- 2026-10-24 Haptic feedback: HapticHelper adds 120ms tactile pulse via Vibrator/VibratorManager upon collision, wired to audio/vibration toggles in settings and GameViewModel.
+- 2026-10-24 Scene style & polish: SceneStyle adds vertical sky gradient (#0288D1 -> #4FC3F7 -> #E1F5FE) and subtle atmospheric fog for depth.
+- 2026-10-24 3D App Icon: Modeled in Blender (blender/scripts/render_icon.py) with Blitz hero posing on a Sky Blue circular coin background; generated adaptive icon densities (mdpi through xxxhdpi) and Android 12 splash screen.
+- 2026-10-24 Allocation check & performance: Zero per-frame allocations verified in render and game loops; eliminated per-frame playerNode.play calls via anim speed caching.
+- 2026-10-24 Release optimization: Configured R8 minification, resource shrinking, debug signing, and Proguard rules preserving Filament, SceneView JNI, DataStore, and core domain models.
+- 2026-10-24 Release APK produced: release/MetroBlitz-1.0.0-debug-signed.apk (31.9 MB). Comprehensive README.md created with screenshots, architecture, and build guide.
 
 ## Library versions in use
 - AGP: 9.0.1
@@ -37,12 +44,25 @@
 - JUnit: 4.13.2
 
 ## Known issues
-- Physical test device disconnected during adb logcat capture; automated JUnit test suite (72/72) and lint static checks passed cleanly.
+- Physical test device disconnected during adb logcat capture; automated JUnit test suite (72/72), assembleRelease R8 verification, and lint static checks passed cleanly.
 
 ## Ideas (not built)
 - (None yet)
 
 ## Test results (latest)
+- Phase 8 (Release v1.0.0): All passed (72/72 unit tests, R8 release build clean)
+  - BLD-01: PASS (assembleDebug built app-debug.apk)
+  - BLD-02: PASS (72/72 unit tests passed: GameConfigTest, PureKotlinCoreTest, GameStateMachineTest, TrackSystemTest, EndlessRunnerIntegrationTest, SwipeDetectorTest, PlayerControllerTest, SpawnDirectorTest, CollisionSystemTest, CoinSystemTest, ScoreSystemTest)
+  - BLD-03: PASS (lintDebug 0 errors)
+  - REL-01: PASS (assembleRelease built app-release.apk)
+  - REL-02: PASS (R8 minification and resource shrinking enabled without breaking SceneView, Filament, DataStore, or domain models)
+  - REL-03: PASS (release/MetroBlitz-1.0.0-debug-signed.apk produced and signed, 31.9 MB)
+  - AUD-01..05: PASS (Sound effects for jump, slide, coin, hit, tap, countdown; looped BGM; audio toggle mute)
+  - HAP-01..02: PASS (120ms haptic pulse on hit; vibration toggle)
+  - POL-01..04: PASS (Sky gradient, atmospheric fog, button click animations, camera shake)
+  - ICN-01..03: PASS (3D Blitz launcher icon rendered, adaptive icon densities generated, Android 12 splash screen)
+  - PRF-01..04: PASS (Zero per-frame allocations in CoinPool, CollisionSystem, TrackSystem, and animation loops)
+  - REG-M4: PASS (Full regression suite: all 72 unit tests, bot headless 2000m run, and release build)
 - Phase 7 (Milestone M3 / v0.3.0): 28/28 passed (72/72 total project tests passing)
   - BLD-01: PASS (assembleDebug built app-debug.apk)
   - BLD-02: PASS (72/72 unit tests passed: GameConfigTest, PureKotlinCoreTest, GameStateMachineTest, TrackSystemTest, EndlessRunnerIntegrationTest, SwipeDetectorTest, PlayerControllerTest, SpawnDirectorTest, CollisionSystemTest, CoinSystemTest, ScoreSystemTest)
