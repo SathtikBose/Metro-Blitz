@@ -59,16 +59,12 @@ fun ModelViewerScreen(
 
     val modelNode = remember {
         val instance = modelLoader.createModelInstance(AssetCatalog.MODEL_BLITZ)
-        if (instance != null) {
-            ModelNode(
-                modelInstance = instance,
-                scaleToUnits = 1.7f
-            ).apply {
-                position = Position(x = 0.0f, y = 0.0f, z = 0.0f)
-                playAnimation(AssetCatalog.CLIP_IDLE, loop = true)
-            }
-        } else {
-            null
+        ModelNode(
+            modelInstance = instance,
+            scaleToUnits = 1.7f
+        ).apply {
+            position = Position(x = 0.0f, y = 0.0f, z = 0.0f)
+            playAnimation(AssetCatalog.CLIP_IDLE, loop = true)
         }
     }
 
@@ -94,7 +90,7 @@ fun ModelViewerScreen(
             engine = engine,
             modelLoader = modelLoader,
             cameraNode = cameraNode,
-            childNodes = listOfNotNull(modelNode),
+            childNodes = listOf(modelNode),
             onFrame = { frameTimeNanos ->
                 if (lastNanos != 0L && autoRotate) {
                     val dt = ((frameTimeNanos - lastNanos) / 1_000_000_000.0f).coerceIn(0.0f, 0.05f)
@@ -170,7 +166,7 @@ fun ModelViewerScreen(
                         onClick = {
                             selectedClip = clip
                             val isLoop = (clip == AssetCatalog.CLIP_IDLE || clip == AssetCatalog.CLIP_RUN)
-                            modelNode?.playAnimation(clip, loop = isLoop)
+                            modelNode.playAnimation(clip, loop = isLoop)
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = if (isSelected) Color(GameConfig.COLOR_SUNNY_YELLOW) else Color.White
